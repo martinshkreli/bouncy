@@ -1,0 +1,67 @@
+<html>
+<head>
+  <title>hi</title>
+</head>
+<body>
+<canvas id="game" width="800" height="800">
+</canvas>
+</body>
+
+<script>
+
+var user = {
+  name: '',
+  radius: 0,
+  speed: 5,
+  color: '',
+  x: 150,
+  y: 150
+}
+
+var drawCircle = function(x, y, r) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, 2*Math.PI);
+  ctx.stroke();
+}
+
+var c = document.getElementById("game");
+var ctx = c.getContext("2d");
+var x = 0;
+var y = 0;
+
+window.onkeydown = function(e) {
+  //e.preventDefault();
+   var key = e.keyCode ? e.keyCode : e.which;
+   if (key == 38) {
+     user.y -= user.speed;
+   } else if (key == 40) {
+     user.y += user.speed;
+   } else if (key == 39) {
+     user.x += user.speed;
+   } else if (key == 37) {
+     user.x -= user.speed;
+   }
+}
+
+var programStart = function() {
+  setInterval(render, 10);
+}
+
+var clearBackground = function() {
+  ctx.fillStyle = 'white'
+  ctx.fillRect(0,0,800,800);
+};
+
+var render = function() {
+  clearBackground();
+  drawUsers();
+};
+
+var drawUsers = function() {
+  drawCircle(user.x, user.y, 100);
+};
+
+drawCircle (user.x, user.y, 100);
+programStart();
+
+</script>
