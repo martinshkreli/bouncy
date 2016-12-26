@@ -4,7 +4,7 @@
 </head>
 <body>
   <h1 id="messages"></h1>
-<canvas id="game" width="800" height="800">
+<canvas id="game" width="1200" height="800">
 </canvas>
 </body>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
@@ -44,6 +44,7 @@ socket.on('message', function(data){
     users[userId].x = data.message.x;
     users[userId].y = data.message.y;
     users[userId].color = data.message.color;
+    users[userId].radius = data.message.radius;
   }
 });
 
@@ -148,7 +149,7 @@ var drawUsers = function() {
     if(users[n] == undefined) {continue};
     if(users[n].x == undefined ) {continue};
     ctx.fillStyle = users[n].color;
-    drawCircle(users[n].x, users[n].y, user.radius);
+    drawCircle(users[n].x, users[n].y, users[n].radius);
     ctx.fill();
   }
 

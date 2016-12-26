@@ -5,7 +5,7 @@ var users = [];
 var colors = ['red', 'blue', 'orange', 'yellow', 'green', 'purple', 'pink', 'brown', 'magenta', 'indigo'];
 var userProto = {
   name: '',
-  radius: 0,
+  radius: 100,
   speed: 5,
   color: '',
   x: 150,
@@ -17,13 +17,10 @@ exports.initialize = function(server) {
   io = io.listen(server);
   io.sockets.on("connection", function(socket) {
     userCount++;
-    console.log("User count is: " + userCount);
     users[userCount] = Object.create(userProto);
     var rnd = Math.floor((Math.random() * 10) + 0);
     users[userCount].name = names[rnd];
     users[userCount].color = colors[rnd];
-    console.log("Color is: ");
-    console.log(users[userCount].color);
     socket.send(JSON.stringify(
       {
         type: 'serverMessage',
@@ -37,10 +34,7 @@ exports.initialize = function(server) {
       message = JSON.parse(message);
 
       if (message.type == 'userAction') {
-        console.log("got userAction message!");
         socket.broadcast.send(JSON.stringify(message));
-        console.log("broadcast:");
-        console.log(message);
         message.type = 'myMessage';
         socket.send(JSON.stringify(message));
       }
