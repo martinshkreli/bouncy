@@ -16,7 +16,7 @@ exports.initialize = function(server) {
   io = io.listen(server);
   io.sockets.on("connection", function(socket) {
     userCount++;
-    var users[userCount] = Object.create(userProto);
+    users[userCount] = Object.create(userProto);
     var rnd = Math.floor((Math.random() * 10) + 0);
     users[userCount].name = names[rnd];
     socket.send(JSON.stringify(
