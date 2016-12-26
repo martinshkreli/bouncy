@@ -100,8 +100,13 @@ window.onkeydown = function(e) {
      };
      socket.send(JSON.stringify(data));
    } else if (key == 83) {
-     user.speed = user.speed * 1.1;
-     user.radius = user.radius * 0.9;
+     if (user.speed > 10) {
+       ctx.fillStyle = 'black';
+       ctx.fillText("max speed!", 50, 200);
+     } else {
+       user.speed = user.speed * 1.05;
+       user.radius = user.radius * 0.95;
+     };
      var data = {
        type: 'userAction',
        message: {
@@ -135,7 +140,7 @@ var programStart = function() {
 
 var clearBackground = function() {
   ctx.fillStyle = 'white'
-  ctx.fillRect(0,0,800,800);
+  ctx.fillRect(0,0,1200,800);
 };
 
 var render = function() {
