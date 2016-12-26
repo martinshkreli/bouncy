@@ -1,5 +1,5 @@
 var io = require('socket.io');
-var userCount;
+var userCount = 0;
 var names = ['Martin', 'Mark', 'Sally', 'Lil Wayne', 'Eminem', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
 var users = [];
 var userProto = {
@@ -16,13 +16,15 @@ exports.initialize = function(server) {
   io = io.listen(server);
   io.sockets.on("connection", function(socket) {
     userCount++;
+    console.log("User count is: " + userCount);
     users[userCount] = Object.create(userProto);
     var rnd = Math.floor((Math.random() * 10) + 0);
     users[userCount].name = names[rnd];
     socket.send(JSON.stringify(
       {
         type: 'serverMessage',
-        message: 'Welcome to Bouncy ' + users[userCount].name + '!'
+        message: 'Welcome to Bouncy ' + users[userCount].name + '! ' + userCount,
+        userId: userCount
       }
     ));
     socket.on('message', function(message){
