@@ -34,6 +34,9 @@ socket.on('message', function(data){
   if (data.type == "serverMessage") {
     $('#messages').append($('<ul>').text(data.message));
     user.userId = data.userId;
+    user.color = data.color;
+    console.log("I got my color");
+    console.log(user.color);
   };
 
   if (data.type == "userAction") {
@@ -42,8 +45,8 @@ socket.on('message', function(data){
     var userId = data.message.userId
     users[data.message.userId] = Object.create(user);
     users[userId][userId] = userId;
-    users[userId].x = data.message.x
-    users[userId].y = data.message.y
+    users[userId].x = data.message.x;
+    users[userId].y = data.message.y;
   }
 });
 
@@ -123,12 +126,14 @@ var render = function() {
 };
 
 var drawUsers = function() {
-  ctx.fillStyle = 'black'; ctx.font = "18px Arial";
 
-  for(var n = 0; n <= users.length; n++){
+  for(var n = 0; n < users.length; n++){
     if(users[n] == undefined) {continue};
     if(users[n].x == undefined ) {continue};
+    ctx.fillStyle = users[n].color;
+    console.log(users[n].color);
     drawCircle(users[n].x, users[n].y, 100);
+    ctx.fill();
   }
 
   //ctx.fillText(user.userId, 10, 500);
