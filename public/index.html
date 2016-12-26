@@ -3,11 +3,21 @@
   <title>hi</title>
 </head>
 <body>
+  <h1 id="messages"></h1>
 <canvas id="game" width="800" height="800">
 </canvas>
 </body>
-
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
 <script>
+var socket = io.connect('/')
+socket.on('message', function(data){
+  data = JSON.parse(data);
+  $('#messages').append($('<ul>').text(data.message));
+});
 
 var user = {
   name: '',
@@ -63,5 +73,21 @@ var drawUsers = function() {
 
 drawCircle (user.x, user.y, 100);
 programStart();
+
+
+
+
+/*$(function(){
+$('#send').click(function(){
+    var data = {
+      message: $('#message').val(),
+      type: 'userMessage'
+    };
+    console.log(data);
+    socket.send(JSON.stringify(data));
+    $('#message').val('');
+  });
+});*/
+
 
 </script>
