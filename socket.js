@@ -1,12 +1,14 @@
 var io = require('socket.io');
+var user = 0;
 
 exports.initialize = function(server) {
   io = io.listen(server);
   io.sockets.on("connection", function(socket) {
+    user++;
     socket.send(JSON.stringify(
       {
         type: 'serverMessage',
-        message: 'Welcome to Bouncy!'
+        message: 'Welcome to Bouncy ' + user + '!'
       }
     ));
     socket.on('message', function(message){
