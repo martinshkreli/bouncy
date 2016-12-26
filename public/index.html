@@ -35,18 +35,15 @@ socket.on('message', function(data){
     $('#messages').append($('<ul>').text(data.message));
     user.userId = data.userId;
     user.color = data.color;
-    console.log("I got my color");
-    console.log(user.color);
   };
 
   if (data.type == "userAction") {
-    console.log("got a message!");
-    console.log(data.message.userId);
     var userId = data.message.userId
     users[data.message.userId] = Object.create(user);
     users[userId][userId] = userId;
     users[userId].x = data.message.x;
     users[userId].y = data.message.y;
+    users[userId].color = data.message.color;
   }
 });
 
@@ -82,7 +79,9 @@ window.onkeydown = function(e) {
        message: {
          x: user.x,
          y: user.y,
-         userId: user.userId
+         userId: user.userId,
+         radius: user.radius,
+         color: user.color
        }
      };
      socket.send(JSON.stringify(data));
@@ -93,7 +92,9 @@ window.onkeydown = function(e) {
        message: {
          x: user.x,
          y: user.y,
-         userId: user.userId
+         userId: user.userId,
+         radius: user.radius,
+         color: user.color
        }
      };
      socket.send(JSON.stringify(data));
@@ -105,7 +106,9 @@ window.onkeydown = function(e) {
        message: {
          x: user.x,
          y: user.y,
-         userId: user.userId
+         userId: user.userId,
+         radius: user.radius,
+         color: user.color
        }
      };
      socket.send(JSON.stringify(data));
@@ -116,7 +119,9 @@ window.onkeydown = function(e) {
        message: {
          x: user.x,
          y: user.y,
-         userId: user.userId
+         userId: user.userId,
+         radius: user.radius,
+         color: user.color
        }
      };
      socket.send(JSON.stringify(data));
@@ -143,7 +148,6 @@ var drawUsers = function() {
     if(users[n] == undefined) {continue};
     if(users[n].x == undefined ) {continue};
     ctx.fillStyle = users[n].color;
-    console.log(users[n].color);
     drawCircle(users[n].x, users[n].y, user.radius);
     ctx.fill();
   }
