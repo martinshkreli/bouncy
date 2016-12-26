@@ -17,7 +17,7 @@
 var socket = io.connect('/');
 var user = {
   name: '',
-  radius: 0,
+  radius: 100,
   speed: 5,
   color: '',
   x: 150,
@@ -97,6 +97,18 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
+   } else if (key == 83) {
+     user.speed = user.speed * 1.1;
+     user.radius = user.radius * 0.9;
+     var data = {
+       type: 'userAction',
+       message: {
+         x: user.x,
+         y: user.y,
+         userId: user.userId
+       }
+     };
+     socket.send(JSON.stringify(data));
    } else if (key == 37) {
      user.x -= user.speed;
      var data = {
@@ -132,7 +144,7 @@ var drawUsers = function() {
     if(users[n].x == undefined ) {continue};
     ctx.fillStyle = users[n].color;
     console.log(users[n].color);
-    drawCircle(users[n].x, users[n].y, 100);
+    drawCircle(users[n].x, users[n].y, user.radius);
     ctx.fill();
   }
 
@@ -142,7 +154,7 @@ var drawUsers = function() {
 
 };
 
-drawCircle (user.x, user.y, 100);
+drawCircle (user.x, user.y, user.radius);
 programStart();
 
 </script>
