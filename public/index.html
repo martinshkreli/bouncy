@@ -13,13 +13,16 @@
   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
   crossorigin="anonymous"></script>
 <script>
-var socket = io.connect('/')
+
+var socket = io.connect('/');
+
 socket.on('message', function(data){
   data = JSON.parse(data);
   $('#messages').append($('<ul>').text(data.message));
+  console.log(data.message);
 });
 
-var user = {
+var userProto = {
   name: '',
   radius: 0,
   speed: 5,
@@ -28,7 +31,6 @@ var user = {
   y: 150,
   userId: ''
 }
-
 
 var drawCircle = function(x, y, r) {
   ctx.beginPath();
@@ -75,9 +77,6 @@ var drawUsers = function() {
 
 drawCircle (user.x, user.y, 100);
 programStart();
-
-
-
 
 /*$(function(){
 $('#send').click(function(){

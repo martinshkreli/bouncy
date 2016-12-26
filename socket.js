@@ -1,14 +1,28 @@
 var io = require('socket.io');
-var user = 0;
+var userCount;
+var names = ['Martin', 'Mark', 'Sally', 'Lil Wayne', 'Eminem', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
+var users = [];
+var userProto = {
+  name: '',
+  radius: 0,
+  speed: 5,
+  color: '',
+  x: 150,
+  y: 150,
+  userId: ''
+}
 
 exports.initialize = function(server) {
   io = io.listen(server);
   io.sockets.on("connection", function(socket) {
-    user++;
+    userCount++;
+    var users[userCount] = Object.create(userProto);
+    var rnd = Math.floor((Math.random() * 10) + 0);
+    users[userCount].name = names[rnd];
     socket.send(JSON.stringify(
       {
         type: 'serverMessage',
-        message: 'Welcome to Bouncy ' + user + '!'
+        message: 'Welcome to Bouncy ' + users[userCount].name + '!'
       }
     ));
     socket.on('message', function(message){
