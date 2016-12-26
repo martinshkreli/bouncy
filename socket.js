@@ -28,9 +28,14 @@ exports.initialize = function(server) {
       }
     ));
     socket.on('message', function(message){
+      //PARSE THE MESSAGE FROM STRING BACK TO JSON
       message = JSON.parse(message);
+      
       if (message.type == 'userAction') {
+        console.log("got userAction message!");
         socket.broadcast.send(JSON.stringify(message));
+        console.log("broadcast:");
+        console.log(message);
         message.type = 'myMessage';
         socket.send(JSON.stringify(message));
       }

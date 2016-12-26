@@ -24,15 +24,28 @@ var user = {
   y: 150,
   userId: 0
 }
+var users = [];
+users[0] = user;
 
 socket.on('message', function(data){
+
   data = JSON.parse(data);
-  $('#messages').append($('<ul>').text(data.message));
-  console.log(data.message);
-  user.userId = data.userId;
+
+  if (data.type == "serverMessage") {
+    $('#messages').append($('<ul>').text(data.message));
+    user.userId = data.userId;
+  };
+
+  if (data.type == "userAction") {
+    console.log("got a message!");
+    console.log(data.message.userId);
+    var userId = data.message.userId
+    users[data.message.userId] = Object.create(user);
+    users[userId][userId] = userId;
+    users[userId].x = data.message.x
+    users[userId].y = data.message.y
+  }
 });
-
-
 
 var drawCircle = function(x, y, r) {
   ctx.beginPath();
@@ -51,19 +64,47 @@ window.onkeydown = function(e) {
    if (key == 38) {
      user.y -= user.speed;
      var data = {
-       type: 'userMessage',
+       type: 'userAction',
        message: {
          x: user.x,
          y: user.y,
          userId: user.userId
        }
      };
+     socket.send(JSON.stringify(data));
    } else if (key == 40) {
      user.y += user.speed;
+     var data = {
+       type: 'userAction',
+       message: {
+         x: user.x,
+         y: user.y,
+         userId: user.userId
+       }
+     };
+     socket.send(JSON.stringify(data));
    } else if (key == 39) {
      user.x += user.speed;
+     var data = {
+       type: 'userAction',
+       message: {
+         x: user.x,
+         y: user.y,
+         userId: user.userId
+       }
+     };
+     socket.send(JSON.stringify(data));
    } else if (key == 37) {
      user.x -= user.speed;
+     var data = {
+       type: 'userAction',
+       message: {
+         x: user.x,
+         y: user.y,
+         userId: user.userId
+       }
+     };
+     socket.send(JSON.stringify(data));
    }
 }
 
@@ -83,24 +124,20 @@ var render = function() {
 
 var drawUsers = function() {
   ctx.fillStyle = 'black'; ctx.font = "18px Arial";
-  ctx.fillText(user.userId, 10, 500);
-  drawCircle(user.x, user.y, 100);
+
+  for(var n = 0; n <= users.length; n++){
+    if(users[n] == undefined) {continue};
+    if(users[n].x == undefined ) {continue};
+    drawCircle(users[n].x, users[n].y, 100);
+  }
+
+  //ctx.fillText(user.userId, 10, 500);
+
+
+
 };
 
 drawCircle (user.x, user.y, 100);
 programStart();
-
-/*$(function(){
-$('#send').click(function(){
-    var data = {
-      message: $('#message').val(),
-      type: 'userMessage'
-    };
-    console.log(data);
-    socket.send(JSON.stringify(data));
-    $('#message').val('');
-  });
-});*/
-
 
 </script>
