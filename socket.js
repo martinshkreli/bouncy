@@ -31,13 +31,17 @@ exports.initialize = function(server) {
     ));
     socket.on('message', function(message){
       //PARSE THE MESSAGE FROM STRING BACK TO JSON
+      try {
       message = JSON.parse(message);
-
       if (message.type == 'userAction') {
         socket.broadcast.send(JSON.stringify(message));
         message.type = 'myMessage';
         socket.send(JSON.stringify(message));
+      } } catch (x) {
+        if (users[userCount] === 'undefined') {return}
+        console.log(x);
       }
+
     });
   });
 };
