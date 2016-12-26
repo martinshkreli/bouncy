@@ -34,6 +34,8 @@ exports.initialize = function(server) {
       try {
       message = JSON.parse(message);
       if (message.type == 'userAction') {
+        if (message.message.radius > 200){return;};
+        if (message.message.speed > 10){return;};
         socket.broadcast.send(JSON.stringify(message));
         message.type = 'myMessage';
         socket.send(JSON.stringify(message));

@@ -101,7 +101,7 @@ window.onkeydown = function(e) {
      socket.send(JSON.stringify(data));
    } else if (key == 83) {
      if (user.speed > 10) {
-       ctx.fillStyle = 'black';
+       ctx.fillStyle = 'black';ctx.font = '80px Arial';
        ctx.fillText("max speed!", 50, 200);
      } else {
        user.speed = user.speed * 1.05;
