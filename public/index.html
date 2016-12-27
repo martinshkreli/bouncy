@@ -37,7 +37,7 @@ h1 {
   <title>Bouncy</title>
 </head>
 <body>
-  <p> Press S to shrink, press C to change color!</p>
+  <p> Press S to shrink, press C to change color, arrow keys to move!</p>
   <h1 id="messages"></h1>
   <div id="chatdiv">
     <section id="chatroom">
@@ -181,7 +181,6 @@ window.onkeydown = function(e) {
      socket.send(JSON.stringify(data));
    } else if (key == 67) {
      user.color = "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)";
-     console.log(user.color);
      var data = {
        type: 'userAction',
        message: {
