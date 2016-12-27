@@ -1,7 +1,16 @@
 <html>
 <head>
 <style>
+body {
+  margin: 5px;
+  padding: 5px;
+}
 h1 {
+  left: -25px;
+  top: 18px;
+  padding: 0px;
+  margin: 0px;
+  position: absolute;
   font-size: 18px;
 }
 #chatdiv {
@@ -28,12 +37,14 @@ h1 {
   <title>Bouncy</title>
 </head>
 <body>
+  <p> Press S to shrink, press C to change color!</p>
   <h1 id="messages"></h1>
   <div id="chatdiv">
     <section id="chatroom">
       <input id="message" type="text" placeholder="Enter message">
       <input id="send" type="button" value="Send">
     </section>
+
   </div>
 <canvas id="game" width="1200" height="800" style="border:1px solid #000000;">
 </canvas>
@@ -61,6 +72,12 @@ var user = {
 }
 var users = [];
 //map.users[0] = user;
+
+var createRandom = function (min, max) {
+  var newRandom = Math.floor((Math.random() * max) + min);
+  return newRandom;
+}
+
 
 socket.on('message', function(data){
   data = JSON.parse(data);
@@ -149,7 +166,7 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key == 37) {
+   } else if (key == 37 || key == 100) { //LEFT
      user.x -= user.speed;
      var data = {
        type: 'userAction',
@@ -162,6 +179,20 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
+   } else if (key == 67) {
+     user.color = "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)";
+     console.log(user.color);
+     var data = {
+       type: 'userAction',
+       message: {
+         x: user.x,
+         y: user.y,
+         userId: user.userId,
+         radius: user.radius,
+         color: user.color
+       }
+     };
+      socket.send(JSON.stringify(data));
    }
 }
 

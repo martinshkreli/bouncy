@@ -2,7 +2,6 @@ var io = require('socket.io');
 var userCount = 0;
 var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
 var users = [];
-var colors = ['red', 'blue', 'orange', 'yellow', 'green', 'purple', 'pink', 'brown', 'magenta', 'indigo'];
 var userProto = {
   name: '',
   radius: 100,
@@ -23,7 +22,7 @@ exports.initialize = function(server) {
     globalMap.users[userCount] = Object.create(userProto);
     var rnd = Math.floor((Math.random() * 10) + 0);
     globalMap.users[userCount].name = names[rnd];
-    globalMap.users[userCount].color = colors[rnd];
+    globalMap.users[userCount].color = "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)";
     globalMap.users[userCount].x = 150;
     globalMap.users[userCount].y = 150;
     globalMap.users[userCount].radius = 100;
@@ -75,4 +74,9 @@ var stateBuilder = function (message) {
     color: message.message.color
   };
   return globalMap;
+}
+
+var createRandom = function (min, max) {
+  var newRandom = Math.floor((Math.random() * max) + min);
+  return newRandom;
 }
