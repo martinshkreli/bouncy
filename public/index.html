@@ -1,10 +1,41 @@
 <html>
 <head>
-  <title>hi</title>
+<style>
+h1 {
+  font-size: 18px;
+}
+#chatdiv {
+  position: absolute;
+  right: 50px;
+  width: 200px;
+}
+#chatroom {
+  position: absolute;
+  height: 400px;
+  width: 150px;
+  right: 100px;
+  background-color: #EFFFEC;
+  margin: 0px;
+  padding: 0px;
+}
+#messages{
+  position: absolute;
+  height: 100px;
+  width: 700px;
+  padding: 10px;
+}
+</style>
+  <title>Bouncy</title>
 </head>
 <body>
   <h1 id="messages"></h1>
-<canvas id="game" width="1200" height="800">
+  <div id="chatdiv">
+    <section id="chatroom">
+      <input id="message" type="text" placeholder="Enter message">
+      <input id="send" type="button" value="Send">
+    </section>
+  </div>
+<canvas id="game" width="1200" height="800" style="border:1px solid #000000;">
 </canvas>
 </body>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
@@ -15,6 +46,10 @@
 <script>
 
 var socket = io.connect('/');
+var map = {
+  type: 'map',
+  users: []
+}
 var user = {
   name: '',
   radius: 100,
@@ -25,27 +60,20 @@ var user = {
   userId: 0
 }
 var users = [];
-users[0] = user;
+//map.users[0] = user;
 
 socket.on('message', function(data){
-
   data = JSON.parse(data);
+
+  if(data.type == "map"){
+    map = data;
+  };
 
   if (data.type == "serverMessage") {
     $('#messages').append($('<ul>').text(data.message));
     user.userId = data.userId;
     user.color = data.color;
   };
-
-  if (data.type == "userAction") {
-    var userId = data.message.userId
-    users[data.message.userId] = Object.create(user);
-    users[userId][userId] = userId;
-    users[userId].x = data.message.x;
-    users[userId].y = data.message.y;
-    users[userId].color = data.message.color;
-    users[userId].radius = data.message.radius;
-  }
 });
 
 var drawCircle = function(x, y, r) {
@@ -62,6 +90,7 @@ var y = 0;
 window.onkeydown = function(e) {
   //e.preventDefault();
    var key = e.keyCode ? e.keyCode : e.which;
+
    if (key == 38) {
      user.y -= user.speed;
      var data = {
@@ -69,11 +98,13 @@ window.onkeydown = function(e) {
        message: {
          x: user.x,
          y: user.y,
-         userId: user.userId
+         userId: user.userId,
+         radius: user.radius,
+         color: user.color
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key == 40) {
+   } else if (key == 40) { //down
      user.y += user.speed;
      var data = {
        type: 'userAction',
@@ -145,22 +176,23 @@ var clearBackground = function() {
 
 var render = function() {
   clearBackground();
-  drawUsers();
+  renderMap();
 };
 
-var drawUsers = function() {
-
-  for(var n = 0; n < users.length; n++){
-    if(users[n] == undefined) {continue};
-    if(users[n].x == undefined ) {continue};
-    ctx.fillStyle = users[n].color;
-    drawCircle(users[n].x, users[n].y, users[n].radius);
+var renderMap = function() {
+  for(var n = 0; n < map.users.length; n++){
+    if(map.users[n] == undefined) {continue};
+    if(map.users[n] == null) {continue};
+    if(map.users[n].x == undefined ) {continue};
+    if(map.users[n].x == null ) {continue};
+    ctx.fillStyle = map.users[n].color;
+    drawCircle(map.users[n].x, map.users[n].y, map.users[n].radius);
     ctx.fill();
   }
   //ctx.fillText(user.userId, 10, 500);
 };
 
-drawCircle (user.x, user.y, user.radius);
+//drawCircle (user.x, user.y, user.radius);
 programStart();
 
 </script>

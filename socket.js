@@ -1,6 +1,6 @@
 var io = require('socket.io');
 var userCount = 0;
-var names = ['Martin', 'Mark', 'Sally', 'Lil Wayne', 'Eminem', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
+var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
 var users = [];
 var colors = ['red', 'blue', 'orange', 'yellow', 'green', 'purple', 'pink', 'brown', 'magenta', 'indigo'];
 var userProto = {
@@ -11,39 +11,68 @@ var userProto = {
   x: 150,
   y: 150,
   userId: ''
+};
+var globalMap = {
+  type: 'map',
+  users: []
 }
 
 exports.initialize = function(server) {
   io = io.listen(server);
   io.sockets.on("connection", function(socket) {
-    userCount++;
-    users[userCount] = Object.create(userProto);
+    globalMap.users[userCount] = Object.create(userProto);
     var rnd = Math.floor((Math.random() * 10) + 0);
-    users[userCount].name = names[rnd];
-    users[userCount].color = colors[rnd];
+    globalMap.users[userCount].name = names[rnd];
+    globalMap.users[userCount].color = colors[rnd];
+    globalMap.users[userCount].x = 150;
+    globalMap.users[userCount].y = 150;
+    globalMap.users[userCount].radius = 100;
+    globalMap.users[userCount].speed = 5;
     socket.send(JSON.stringify(
       {
         type: 'serverMessage',
-        message: 'Welcome to Bouncy ' + users[userCount].name + '! ' + userCount,
+        message: 'Welcome to Bouncy ' + globalMap.users[userCount].name + '! ' + userCount,
         userId: userCount,
-        color: users[userCount].color
+        color: globalMap.users[userCount].color
       }
     ));
+    console.log("globalMap");
+    console.log(globalMap);
+    socket.send(JSON.stringify(globalMap));
+    userCount++;
     socket.on('message', function(message){
       //PARSE THE MESSAGE FROM STRING BACK TO JSON
       try {
-      message = JSON.parse(message);
-      if (message.type == 'userAction') {
-        if (message.message.radius > 200){return;};
-        if (message.message.speed > 10){return;};
-        socket.broadcast.send(JSON.stringify(message));
-        message.type = 'myMessage';
-        socket.send(JSON.stringify(message));
-      } } catch (x) {
-        if (users[userCount] === 'undefined') {return}
-        console.log(x);
-      }
+
+        message = JSON.parse(message);
+
+        if (message.type == 'userAction') {
+          if (message.message.radius > 200){return;};
+          if (message.message.speed > 10){return;};
+          console.log(message);
+          var map = stateBuilder(message);
+          socket.broadcast.send(JSON.stringify(map));
+          console.log("sending map");
+          console.log(map);
+          //message.type = 'myMessage';
+          socket.send(JSON.stringify(map));
+        }
+      } catch (x) {
+          if (users[userCount] === 'undefined') {return}
+          console.log(x);
+        }
 
     });
   });
 };
+
+
+var stateBuilder = function (message) {
+  globalMap.users[message.message.userId] = {
+    x: message.message.x,
+    y: message.message.y,
+    radius: message.message.radius,
+    color: message.message.color
+  };
+  return globalMap;
+}
