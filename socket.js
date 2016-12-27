@@ -67,12 +67,10 @@ exports.initialize = function(server) {
 
 
 var stateBuilder = function (message) {
-  globalMap.users[message.message.userId] = {
-    x: message.message.x,
-    y: message.message.y,
-    radius: message.message.radius,
-    color: message.message.color
-  };
+  if (message.message.x !== undefined) {globalMap.users[message.message.userId].x = message.message.x;}
+  if (message.message.y !== undefined) {globalMap.users[message.message.userId].y = message.message.y;}
+  if (message.message.radius !== undefined) {globalMap.users[message.message.userId].radius = message.message.radius;}
+  if (message.message.color !== undefined) {globalMap.users[message.message.userId].color = message.message.color;}
   return globalMap;
 }
 

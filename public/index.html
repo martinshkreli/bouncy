@@ -83,7 +83,7 @@ socket.on('message', function(data){
   data = JSON.parse(data);
 
   if(data.type == "map"){
-    map = data;
+    map = data; //make this map message smaller
   };
 
   if (data.type == "serverMessage") {
@@ -113,11 +113,8 @@ window.onkeydown = function(e) {
      var data = {
        type: 'userAction',
        message: {
-         x: user.x,
          y: user.y,
-         userId: user.userId,
-         radius: user.radius,
-         color: user.color
+         userId: user.userId
        }
      };
      socket.send(JSON.stringify(data));
@@ -126,11 +123,8 @@ window.onkeydown = function(e) {
      var data = {
        type: 'userAction',
        message: {
-         x: user.x,
          y: user.y,
-         userId: user.userId,
-         radius: user.radius,
-         color: user.color
+         userId: user.userId
        }
      };
      socket.send(JSON.stringify(data));
@@ -140,14 +134,11 @@ window.onkeydown = function(e) {
        type: 'userAction',
        message: {
          x: user.x,
-         y: user.y,
-         userId: user.userId,
-         radius: user.radius,
-         color: user.color
+         userId: user.userId
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key == 83) {
+   } else if (key == 83) { //S key
      if (user.speed > 10) {
        ctx.fillStyle = 'black';ctx.font = '80px Arial';
        ctx.fillText("max speed!", 50, 200);
@@ -158,11 +149,8 @@ window.onkeydown = function(e) {
      var data = {
        type: 'userAction',
        message: {
-         x: user.x,
-         y: user.y,
          userId: user.userId,
-         radius: user.radius,
-         color: user.color
+         radius: user.radius
        }
      };
      socket.send(JSON.stringify(data));
@@ -172,10 +160,7 @@ window.onkeydown = function(e) {
        type: 'userAction',
        message: {
          x: user.x,
-         y: user.y,
-         userId: user.userId,
-         radius: user.radius,
-         color: user.color
+         userId: user.userId
        }
      };
      socket.send(JSON.stringify(data));
@@ -184,10 +169,7 @@ window.onkeydown = function(e) {
      var data = {
        type: 'userAction',
        message: {
-         x: user.x,
-         y: user.y,
          userId: user.userId,
-         radius: user.radius,
          color: user.color
        }
      };
