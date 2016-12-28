@@ -256,6 +256,10 @@ $('#send').on('click', function (clicked) {
     alert('Make sure to actually write a message!');
     return;
   }
+  if (messageToSend.length > 20) {
+    alert('Make sure to actually write a message!');
+    return;
+  }
 
   var payload = {
     type: 'textMessage',
