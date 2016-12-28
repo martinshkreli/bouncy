@@ -2,15 +2,18 @@ var io = require('socket.io');
 var userCount = 0;
 var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
 var users = [];
-var userProto = {
-  name: '',
-  radius: 100,
-  speed: 5,
-  color: '',
-  x: 150,
-  y: 150,
-  userId: ''
-};
+
+class userProto {
+  constructor() {
+    this.name = "";
+    this.radius = 100;
+    this.speed = 5;
+    this.color = "";
+    this.x = 150;
+    this.y = 150;
+    this.userId = "";
+  }
+}
 var globalMap = {
   type: 'map',
   users: []
