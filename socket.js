@@ -4,13 +4,13 @@ var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Xzibit', 'DMX'
 var users = [];
 
 class userProtoModel {
-  constructor(name, radius, speed, color, x, y) {
+  constructor(name, color, x, y, radius, speed) {
     this.name = '';
-    this.radius = 100;
-    this.speed = 5;
-    this.color = '';
-    this.x = 150;
-    this.y = 150;
+    this.color = color;
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.speed = speed;
   }
 }
 var globalMap = {
