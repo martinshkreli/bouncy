@@ -70,6 +70,8 @@ exports.initialize = function(server) {
           if (messageToSend.length > 20) {
             return;
           }
+          if (messageToSend.indexOf("fuck") != 0) {return;};
+          if (messageToSend.indexOf("fuk") != 0) {return;};
           console.log('message recieved %s', messageToSend);
           globalChatroom.push(messageToSend);
           // Prepare to send the global chatroom to all users.
