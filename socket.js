@@ -1,4 +1,5 @@
 var io = require('socket.io');
+var sanitizeHtml = require('sanitize-html');
 var userCount = 0;
 var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
 var users = [];
@@ -63,9 +64,11 @@ exports.initialize = function(server) {
         }
 
         if (message.type === 'textMessage') {
-          const messageToSend = message.msg;
+          const messageToSend = sanitizeHtml(message.msg);
+          if (messageToSend.length < 1) {
+            return;
+          }
           console.log('message recieved %s', messageToSend);
-          // TODO: Sanitize input here before adding directly to globalChatroom array.
           globalChatroom.push(messageToSend);
           // Prepare to send the global chatroom to all users.
           const payload = {
