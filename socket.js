@@ -3,15 +3,14 @@ var userCount = 0;
 var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
 var users = [];
 
-class userProto {
-  constructor() {
-    this.name = "";
+class userProtoModel {
+  constructor(name, radius, speed, color, x, y) {
+    this.name = '';
     this.radius = 100;
     this.speed = 5;
-    this.color = "";
+    this.color = '';
     this.x = 150;
     this.y = 150;
-    this.userId = "";
   }
 }
 var globalMap = {
@@ -22,14 +21,16 @@ var globalMap = {
 exports.initialize = function(server) {
   io = io.listen(server);
   io.sockets.on("connection", function(socket) {
-    globalMap.users[userCount] = Object.create(userProto);
     var rnd = Math.floor((Math.random() * 10) + 0);
-    globalMap.users[userCount].name = names[rnd];
-    globalMap.users[userCount].color = "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)";
-    globalMap.users[userCount].x = 150;
-    globalMap.users[userCount].y = 150;
-    globalMap.users[userCount].radius = 100;
-    globalMap.users[userCount].speed = 5;
+    var userProto = new userProtoModel(
+      names[rnd],
+      "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)",
+      150,
+      150,
+      100,
+      5
+      );
+    globalMap.users.push(userProto);
     socket.send(JSON.stringify(
       {
         type: 'serverMessage',
