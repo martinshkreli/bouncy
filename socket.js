@@ -44,22 +44,21 @@ exports.initialize = function(server) {
     console.log(globalMap);
     socket.send(JSON.stringify(globalMap));
     userCount++;
+
+
     socket.on('message', (message) => {
       //PARSE THE MESSAGE FROM STRING BACK TO JSON
       try {
-
         message = JSON.parse(message);
-
         if (message.type == 'userAction') {
-          if (message.message.radius > 200){return;};
-          if (message.message.speed > 10){return;};
+          if (message.message.radius > 200) {return;};
+          if (message.message.speed > 10) {return;};
+          console.log("Player message: ");
           console.log(message);
-          var map = stateBuilder(message);
-          socket.broadcast.send(JSON.stringify(map));
-          console.log("sending map");
-          console.log(map);
+          stateBuilder(message); //add user update to globalMap
           //message.type = 'myMessage';
-          socket.send(JSON.stringify(map));
+          io.emit('message', JSON.stringify(message));
+          console.log("message sent");
         }
 
         if (message.type === 'textMessage') {
@@ -82,7 +81,6 @@ exports.initialize = function(server) {
           if (users[userCount] === 'undefined') {return}
           console.log(x);
         }
-
     });
   });
 };

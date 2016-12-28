@@ -6,3 +6,38 @@ body {
 a {
   color: #00B7FF;
 }
+body {
+  margin: 5px;
+  padding: 5px;
+}
+h1 {
+  left: -25px;
+  top: 18px;
+  padding: 0px;
+  margin: 0px;
+  position: absolute;
+  font-size: 18px;
+}
+#chatdiv {
+  position: absolute;
+  right: 50px;
+  width: 200px;
+}
+#chatroom {
+  position: absolute;
+  height: 400px;
+  width: 150px;
+  right: 100px;
+  background-color: #EFFFEC;
+  margin: 0px;
+  padding: 0px;
+}
+#messages{
+  position: absolute;
+  height: 100px;
+  width: 700px;
+  padding: 10px;
+}
+#chatroom-messages{
+  /* And some CSS stuff here. */
+}

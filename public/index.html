@@ -1,42 +1,6 @@
 <html>
 <head>
-<style>
-body {
-  margin: 5px;
-  padding: 5px;
-}
-h1 {
-  left: -25px;
-  top: 18px;
-  padding: 0px;
-  margin: 0px;
-  position: absolute;
-  font-size: 18px;
-}
-#chatdiv {
-  position: absolute;
-  right: 50px;
-  width: 200px;
-}
-#chatroom {
-  position: absolute;
-  height: 400px;
-  width: 150px;
-  right: 100px;
-  background-color: #EFFFEC;
-  margin: 0px;
-  padding: 0px;
-}
-#messages{
-  position: absolute;
-  height: 100px;
-  width: 700px;
-  padding: 10px;
-}
-#chatroom-messages{
-  /* And some CSS stuff here. */
-}
-</style>
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
   <title>Bouncy</title>
 </head>
 <body>
@@ -85,6 +49,7 @@ var createRandom = function (min, max) {
 
 socket.on('message', function(data){
   data = JSON.parse(data);
+  console.log(data);
 
   if (data.type === 'messages') {
     const allChatMessages = data.chats;
@@ -108,6 +73,11 @@ socket.on('message', function(data){
     user.userId = data.userId;
     user.color = data.color;
   };
+
+  if (data.type === "userAction") {
+    renderUpdate(data);
+  };
+
 });
 
 var drawCircle = function(x, y, r) {
@@ -125,7 +95,7 @@ window.onkeydown = function(e) {
   //e.preventDefault();
    var key = e.keyCode ? e.keyCode : e.which;
 
-   if (key === 38) {
+   if (key === 38 || key === 104) {
      user.y -= user.speed;
      var data = {
        type: 'userAction',
@@ -135,7 +105,7 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key === 40) { //down
+   } else if (key === 40 || key === 98) { //down
      user.y += user.speed;
      var data = {
        type: 'userAction',
@@ -145,7 +115,7 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key === 39) {
+   } else if (key === 39 || key === 102) {
      user.x += user.speed;
      var data = {
        type: 'userAction',
@@ -181,7 +151,55 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key === 67) {
+   } else if (key === 105) { //keypad 9
+     user.x += user.speed;
+     user.y -= user.speed;
+     var data = {
+       type: 'userAction',
+       message: {
+         x: user.x,
+         y: user.y,
+         userId: user.userId
+       }
+     };
+     socket.send(JSON.stringify(data));
+   } else if (key === 103) { //keypad 7
+     user.x -= user.speed;
+     user.y -= user.speed;
+     var data = {
+       type: 'userAction',
+       message: {
+         x: user.x,
+         y: user.y,
+         userId: user.userId
+       }
+     };
+     socket.send(JSON.stringify(data));
+   } else if (key === 97) { //keypad 1
+     user.x -= user.speed;
+     user.y += user.speed;
+     var data = {
+       type: 'userAction',
+       message: {
+         x: user.x,
+         y: user.y,
+         userId: user.userId
+       }
+     };
+     socket.send(JSON.stringify(data));
+   } else if (key === 99) { //keypad 3
+     user.x += user.speed;
+     user.y += user.speed;
+     var data = {
+       type: 'userAction',
+       message: {
+         x: user.x,
+         y: user.y,
+         userId: user.userId
+       }
+     };
+     socket.send(JSON.stringify(data));
+   } else if (key === 67) { //C
      user.color = "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)";
      var data = {
        type: 'userAction',
@@ -199,7 +217,7 @@ window.onkeydown = function(e) {
 // }
 
 var clearBackground = function() {
-  ctx.fillStyle = 'white'
+  ctx.fillStyle = 'white';
   ctx.fillRect(0,0,1200,800);
 };
 
@@ -219,6 +237,17 @@ var renderMap = function() {
     ctx.fill();
   }
   //ctx.fillText(user.userId, 10, 500);
+};
+
+var renderUpdate = function(data) {
+  console.log("in renderUpdate");
+  console.log(data);
+    //look up current value for specific user in client-side userMap
+    if(data.message.x != undefined) {map.users[data.message.userId].x = data.message.x};
+    if(data.message.y != undefined) {map.users[data.message.userId].y = data.message.y};
+    if(data.message.color != undefined) {map.users[data.message.userId].color = data.message.color};
+    if(data.message.radius != undefined) {map.users[data.message.userId].radius = data.message.radius};
+    render();
 };
 
 //drawCircle (user.x, user.y, user.radius);
