@@ -49,7 +49,6 @@ var createRandom = function (min, max) {
 
 socket.on('message', function(data){
   data = JSON.parse(data);
-  console.log(data);
 
   if (data.type === 'messages') {
     const allChatMessages = data.chats;
@@ -240,8 +239,6 @@ var renderMap = function() {
 };
 
 var renderUpdate = function(data) {
-  console.log("in renderUpdate");
-  console.log(data);
     //look up current value for specific user in client-side userMap
     if(data.message.x != undefined) {map.users[data.message.userId].x = data.message.x};
     if(data.message.y != undefined) {map.users[data.message.userId].y = data.message.y};
