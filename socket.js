@@ -67,6 +67,9 @@ exports.initialize = function(server) {
           if (messageToSend.length < 1) {
             return;
           }
+          if (messageToSend.length > 20) {
+            return;
+          }
           console.log('message recieved %s', messageToSend);
           globalChatroom.push(messageToSend);
           // Prepare to send the global chatroom to all users.
