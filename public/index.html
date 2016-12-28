@@ -83,22 +83,18 @@ var createRandom = function (min, max) {
   return newRandom;
 }
 
-var allChatMessages = [];
-
-
 socket.on('message', function(data){
   data = JSON.parse(data);
 
   if (data.type === 'messages') {
-    const recievedMessages = data.chats;
-    if (allChatMessages.length < 1) {
-      allChatMessages = recievedMessages;
-      for (var i = 0; i < recievedMessages.length; i++) {
-        $("#chatroom-messages").append('<li>' + recievedMessages[i] + '</li>')
+    const allChatMessages = data.chats;
+    const listElements = $('#chatroom-messages').children();
+    if (listElements.length.length < 1) {
+      for (var i = 0; i < allChatMessages.length; i++) {
+        $("#chatroom-messages").append('<li>' + allChatMessages[i] + '</li>')
       }
     } else {
-        allChatMessages = recievedMessages[recievedMessages.length - 1]
-        $("#chatroom-messages").append('<li>' + recievedMessages.pop() + '</li>')
+        $("#chatroom-messages").append('<li>' + allChatMessages.pop() + '</li>')
     }
   }
   if(data.type === "map"){
