@@ -94,7 +94,8 @@ window.onkeydown = function(e) {
   //e.preventDefault();
    var key = e.keyCode ? e.keyCode : e.which;
 
-   if (key === 38 || key === 104) {
+   if (key === 38 || key === 104) { //up
+     if ((user.y - user.radius + 5)  < 10) {return;};
      user.y -= user.speed;
      var data = {
        type: 'userAction',
@@ -105,6 +106,7 @@ window.onkeydown = function(e) {
      };
      socket.send(JSON.stringify(data));
    } else if (key === 40 || key === 98) { //down
+     if ((user.y + user.radius + 5) > 800) {return;};
      user.y += user.speed;
      var data = {
        type: 'userAction',
@@ -114,7 +116,8 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key === 39 || key === 102) {
+   } else if (key === 39 || key === 102) { //right
+     if (user.x + user.radius + 5 > 1200) {return;};
      user.x += user.speed;
      var data = {
        type: 'userAction',
@@ -141,6 +144,7 @@ window.onkeydown = function(e) {
      };
      socket.send(JSON.stringify(data));
    } else if (key === 37 || key === 100) { //LEFT
+     if (user.x - user.radius - 5 < 0) {return;};
      user.x -= user.speed;
      var data = {
        type: 'userAction',
@@ -151,6 +155,8 @@ window.onkeydown = function(e) {
      };
      socket.send(JSON.stringify(data));
    } else if (key === 105) { //keypad 9
+     if (user.x + user.radius + 5 > 1200) {return;};
+     if ((user.y - user.radius + 5)  < 10) {return;};
      user.x += user.speed;
      user.y -= user.speed;
      var data = {
@@ -163,6 +169,8 @@ window.onkeydown = function(e) {
      };
      socket.send(JSON.stringify(data));
    } else if (key === 103) { //keypad 7
+     if ((user.y - user.radius + 5)  < 10) {return;};
+     if (user.x - user.radius - 5 < 0) {return;};
      user.x -= user.speed;
      user.y -= user.speed;
      var data = {
@@ -175,6 +183,8 @@ window.onkeydown = function(e) {
      };
      socket.send(JSON.stringify(data));
    } else if (key === 97) { //keypad 1
+     if ((user.y + user.radius + 5) > 800) {return;};
+     if (user.x - user.radius - 5 < 0) {return;};
      user.x -= user.speed;
      user.y += user.speed;
      var data = {
@@ -187,6 +197,8 @@ window.onkeydown = function(e) {
      };
      socket.send(JSON.stringify(data));
    } else if (key === 99) { //keypad 3
+     if (user.y + user.radius + 5 > 800) {return;};
+     if (user.x + user.radius + 5 > 1200) {return;};
      user.x += user.speed;
      user.y += user.speed;
      var data = {
