@@ -85,6 +85,16 @@ socket.on('message', function(data){
 
   if(data.type == "map"){
     map = data; //make this map message smaller
+    // I think this implementation is fast enough.
+    // You could send just the object
+    // from the server which includes the
+    // { userId & x || y change } object, but what's the point?
+    // As soon as you make a change and get a 'message',
+    // you'll need to re-render all elements in the end.
+    // You can send pretty large amounts of text back-and-forth w/o latency
+    // getting too bad.
+    render();
+    // Also, let's render here instead of doing it every 10 ms. This could help save resources.
   };
 
   if (data.type == "serverMessage") {
@@ -178,9 +188,9 @@ window.onkeydown = function(e) {
    }
 }
 
-var programStart = function() {
-  setInterval(render, 10);
-}
+// var programStart = function() {
+//   setInterval(render, 10);
+// }
 
 var clearBackground = function() {
   ctx.fillStyle = 'white'
@@ -206,6 +216,6 @@ var renderMap = function() {
 };
 
 //drawCircle (user.x, user.y, user.radius);
-programStart();
+// programStart();
 
 </script>
