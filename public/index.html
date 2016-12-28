@@ -84,7 +84,7 @@ socket.on('message', function(data){
   data = JSON.parse(data);
 
   if(data.type == "map"){
-    map = data; //make this map message smaller
+    map = data; //TODO: make this map message smaller
     // I think this implementation is fast enough.
     // You could send just the object
     // from the server which includes the
@@ -94,7 +94,7 @@ socket.on('message', function(data){
     // You can send pretty large amounts of text back-and-forth w/o latency
     // getting too bad.
     render();
-    // Also, let's render here instead of doing it every 10 ms. This could help save resources.
+    // Also, let's render here instead of doing it every 10 ms. This could help ease load.
   };
 
   if (data.type == "serverMessage") {
@@ -217,5 +217,21 @@ var renderMap = function() {
 
 //drawCircle (user.x, user.y, user.radius);
 // programStart();
+
+$('#send').on('click', function (clicked) {
+  const messageToSend = $('#message').val();
+  if (messageToSend.length < 1) {
+    alert('Make sure to actually write a message!');
+    return;
+  }
+
+  var payload = {
+    type: 'textMessage',
+    msg: messageToSend
+  };
+
+  socket.send(JSON.stringify(payload));
+
+});
 
 </script>

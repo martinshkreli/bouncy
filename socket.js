@@ -60,6 +60,10 @@ exports.initialize = function(server) {
           //message.type = 'myMessage';
           socket.send(JSON.stringify(map));
         }
+
+        if (message.type === 'textMessage') {
+          console.log(message.msg);
+        }
       } catch (x) {
           if (users[userCount] === 'undefined') {return}
           console.log(x);
