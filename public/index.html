@@ -220,6 +220,8 @@ window.onkeydown = function(e) {
        }
      };
       socket.send(JSON.stringify(data));
+   } else if (key === 68) {
+     console.log(map);
    }
 }
 
@@ -252,6 +254,7 @@ var renderMap = function() {
 
 var renderUpdate = function(data) {
     //look up current value for specific user in client-side userMap
+    if(map.users[data.message.userId] === undefined) {map.users[data.message.userId] = data.message.userId;};
     if(data.message.x != undefined) {map.users[data.message.userId].x = data.message.x};
     if(data.message.y != undefined) {map.users[data.message.userId].y = data.message.y};
     if(data.message.color != undefined) {map.users[data.message.userId].color = data.message.color};

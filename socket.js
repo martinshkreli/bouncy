@@ -52,7 +52,7 @@ exports.initialize = function(server) {
       try {
         message = JSON.parse(message);
         if (message.type == 'userAction') {
-          if (message.message.radius > 160) {return;};
+          if (message.message.radius > 110) {return;};
           if (message.message.speed > 10) {return;};
           console.log("Player message: ");
           console.log(message);
