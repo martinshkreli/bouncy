@@ -237,6 +237,8 @@ var clearBackground = function() {
 var render = function() {
   clearBackground();
   renderMap();
+  ctx.fillStyle = 'black'; ctx.font = '18px Arial';
+  ctx.fillText("Number connected: " + map.users.length, 0, 750);
 };
 
 var renderMap = function() {
