@@ -33,6 +33,9 @@ h1 {
   width: 700px;
   padding: 10px;
 }
+#chatroom-messages{
+  /* And some CSS stuff here. */
+}
 </style>
   <title>Bouncy</title>
 </head>
@@ -43,6 +46,7 @@ h1 {
     <section id="chatroom">
       <input id="message" type="text" placeholder="Enter message">
       <input id="send" type="button" value="Send">
+      <ul id="chatroom-messages"></ul>
     </section>
 
   </div>
@@ -79,25 +83,31 @@ var createRandom = function (min, max) {
   return newRandom;
 }
 
+var allChatMessages = [];
+
 
 socket.on('message', function(data){
   data = JSON.parse(data);
 
-  if(data.type == "map"){
+  if (data.type === 'messages') {
+    const recievedMessages = data.chats;
+    if (allChatMessages.length < 1) {
+      allChatMessages = recievedMessages;
+      for (var i = 0; i < recievedMessages.length; i++) {
+        $("#chatroom-messages").append('<li>' + recievedMessages[i] + '</li>')
+      }
+    } else {
+        allChatMessages = recievedMessages[recievedMessages.length - 1]
+        $("#chatroom-messages").append('<li>' + recievedMessages.pop() + '</li>')
+    }
+  }
+  if(data.type === "map"){
     map = data; //TODO: make this map message smaller
-    // I think this implementation is fast enough.
-    // You could send just the object
-    // from the server which includes the
-    // { userId & x || y change } object, but what's the point?
-    // As soon as you make a change and get a 'message',
-    // you'll need to re-render all elements in the end.
-    // You can send pretty large amounts of text back-and-forth w/o latency
-    // getting too bad.
     render();
-    // Also, let's render here instead of doing it every 10 ms. This could help ease load.
+    // Let's render here instead of doing it every 10 ms. This could help ease load.
   };
 
-  if (data.type == "serverMessage") {
+  if (data.type === "serverMessage") {
     $('#messages').append($('<ul>').text(data.message));
     user.userId = data.userId;
     user.color = data.color;
@@ -119,7 +129,7 @@ window.onkeydown = function(e) {
   //e.preventDefault();
    var key = e.keyCode ? e.keyCode : e.which;
 
-   if (key == 38) {
+   if (key === 38) {
      user.y -= user.speed;
      var data = {
        type: 'userAction',
@@ -129,7 +139,7 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key == 40) { //down
+   } else if (key === 40) { //down
      user.y += user.speed;
      var data = {
        type: 'userAction',
@@ -139,7 +149,7 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key == 39) {
+   } else if (key === 39) {
      user.x += user.speed;
      var data = {
        type: 'userAction',
@@ -149,7 +159,7 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key == 83) { //S key
+   } else if (key === 83) { //S key
      if (user.speed > 10) {
        ctx.fillStyle = 'black';ctx.font = '80px Arial';
        ctx.fillText("max speed!", 50, 200);
@@ -165,7 +175,7 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key == 37 || key == 100) { //LEFT
+   } else if (key === 37 || key === 100) { //LEFT
      user.x -= user.speed;
      var data = {
        type: 'userAction',
@@ -175,7 +185,7 @@ window.onkeydown = function(e) {
        }
      };
      socket.send(JSON.stringify(data));
-   } else if (key == 67) {
+   } else if (key === 67) {
      user.color = "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)";
      var data = {
        type: 'userAction',
@@ -204,10 +214,10 @@ var render = function() {
 
 var renderMap = function() {
   for(var n = 0; n < map.users.length; n++){
-    if(map.users[n] == undefined) {continue};
-    if(map.users[n] == null) {continue};
-    if(map.users[n].x == undefined ) {continue};
-    if(map.users[n].x == null ) {continue};
+    if(map.users[n] === undefined) {continue};
+    if(map.users[n] === null) {continue};
+    if(map.users[n].x === undefined ) {continue};
+    if(map.users[n].x === null ) {continue};
     ctx.fillStyle = map.users[n].color;
     drawCircle(map.users[n].x, map.users[n].y, map.users[n].radius);
     ctx.fill();

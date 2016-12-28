@@ -2,6 +2,7 @@ var io = require('socket.io');
 var userCount = 0;
 var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
 var users = [];
+var globalChatroom = [];
 
 class userProtoModel {
   constructor(name, color, x, y, radius, speed) {
@@ -62,7 +63,20 @@ exports.initialize = function(server) {
         }
 
         if (message.type === 'textMessage') {
-          console.log(message.msg);
+          const messageToSend = message.msg;
+          console.log('message recieved %s', messageToSend);
+          // TODO: Sanitize input here before adding directly to globalChatroom array.
+          globalChatroom.push(messageToSend);
+          // Prepare to send the global chatroom to all users.
+          const payload = {
+            type: 'messages',
+            chats: globalChatroom
+          };
+          // And.. Send.
+          socket.send(JSON.stringify(payload));
+
+          // And then emit to all other users too.
+          socket.broadcast.send(JSON.stringify(payload));
         }
       } catch (x) {
           if (users[userCount] === 'undefined') {return}
