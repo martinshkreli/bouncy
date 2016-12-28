@@ -43,7 +43,7 @@ exports.initialize = function(server) {
     console.log(globalMap);
     socket.send(JSON.stringify(globalMap));
     userCount++;
-    socket.on('message', function(message){
+    socket.on('message', (message) => {
       //PARSE THE MESSAGE FROM STRING BACK TO JSON
       try {
 
@@ -70,7 +70,7 @@ exports.initialize = function(server) {
 };
 
 
-var stateBuilder = function (message) {
+var stateBuilder = (message) => {
   if (message.message.x !== undefined) {globalMap.users[message.message.userId].x = message.message.x;}
   if (message.message.y !== undefined) {globalMap.users[message.message.userId].y = message.message.y;}
   if (message.message.radius !== undefined) {globalMap.users[message.message.userId].radius = message.message.radius;}
@@ -78,7 +78,7 @@ var stateBuilder = function (message) {
   return globalMap;
 }
 
-var createRandom = function (min, max) {
+var createRandom = (min, max) => {
   var newRandom = Math.floor((Math.random() * max) + min);
   return newRandom;
 }
