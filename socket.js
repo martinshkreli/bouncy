@@ -2,15 +2,18 @@ var io = require('socket.io');
 var userCount = 0;
 var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
 var users = [];
-var userProto = {
-  name: '',
-  radius: 100,
-  speed: 5,
-  color: '',
-  x: 150,
-  y: 150,
-  userId: ''
-};
+var globalChatroom = [];
+
+class userProtoModel {
+  constructor(name, color, x, y, radius, speed) {
+    this.name = '';
+    this.color = color;
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.speed = speed;
+  }
+}
 var globalMap = {
   type: 'map',
   users: []
@@ -19,14 +22,16 @@ var globalMap = {
 exports.initialize = function(server) {
   io = io.listen(server);
   io.sockets.on("connection", function(socket) {
-    globalMap.users[userCount] = Object.create(userProto);
     var rnd = Math.floor((Math.random() * 10) + 0);
-    globalMap.users[userCount].name = names[rnd];
-    globalMap.users[userCount].color = "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)";
-    globalMap.users[userCount].x = 150;
-    globalMap.users[userCount].y = 150;
-    globalMap.users[userCount].radius = 100;
-    globalMap.users[userCount].speed = 5;
+    var userProto = new userProtoModel(
+      names[rnd],
+      "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)",
+      150,
+      150,
+      100,
+      5
+      );
+    globalMap.users.push(userProto);
     socket.send(JSON.stringify(
       {
         type: 'serverMessage',
@@ -39,7 +44,7 @@ exports.initialize = function(server) {
     console.log(globalMap);
     socket.send(JSON.stringify(globalMap));
     userCount++;
-    socket.on('message', function(message){
+    socket.on('message', (message) => {
       //PARSE THE MESSAGE FROM STRING BACK TO JSON
       try {
 
@@ -56,6 +61,23 @@ exports.initialize = function(server) {
           //message.type = 'myMessage';
           socket.send(JSON.stringify(map));
         }
+
+        if (message.type === 'textMessage') {
+          const messageToSend = message.msg;
+          console.log('message recieved %s', messageToSend);
+          // TODO: Sanitize input here before adding directly to globalChatroom array.
+          globalChatroom.push(messageToSend);
+          // Prepare to send the global chatroom to all users.
+          const payload = {
+            type: 'messages',
+            chats: globalChatroom
+          };
+          // And.. Send.
+          socket.send(JSON.stringify(payload));
+
+          // And then emit to all other users too.
+          socket.broadcast.send(JSON.stringify(payload));
+        }
       } catch (x) {
           if (users[userCount] === 'undefined') {return}
           console.log(x);
@@ -66,7 +88,7 @@ exports.initialize = function(server) {
 };
 
 
-var stateBuilder = function (message) {
+var stateBuilder = (message) => {
   if (message.message.x !== undefined) {globalMap.users[message.message.userId].x = message.message.x;}
   if (message.message.y !== undefined) {globalMap.users[message.message.userId].y = message.message.y;}
   if (message.message.radius !== undefined) {globalMap.users[message.message.userId].radius = message.message.radius;}
@@ -74,7 +96,7 @@ var stateBuilder = function (message) {
   return globalMap;
 }
 
-var createRandom = function (min, max) {
+var createRandom = (min, max) => {
   var newRandom = Math.floor((Math.random() * max) + min);
   return newRandom;
 }
