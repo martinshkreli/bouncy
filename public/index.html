@@ -95,41 +95,45 @@ window.onkeydown = function(e) {
    var key = e.keyCode ? e.keyCode : e.which;
 
    if (key === 38 || key === 104) { //up
-     if ((user.y - user.radius + 5)  < 10) {return;};
+     if (reachedEdge(user)) { return; };
      user.y -= user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         y: user.y,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
+     updateUserPosition(user);
    } else if (key === 40 || key === 98) { //down
-     if ((user.y + user.radius + 5) > 800) {return;};
+     if (reachedEdge(user)) { return; };
      user.y += user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         y: user.y,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
+     updateUserPosition(user);
    } else if (key === 39 || key === 102) { //right
-     if (user.x + user.radius + 5 > 1200) {return;};
+     if (reachedEdge(user)) { return; };
      user.x += user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
+     updateUserPosition(user);
+   } else if (key === 37 || key === 100) { //LEFT
+     if (reachedEdge(user)) { return; };
+     user.x -= user.speed;
+     updateUserPosition(user);
+   } else if (key === 105) { //keypad 9
+     if (reachedEdge(user)) { return; };
+     user.x += user.speed;
+     user.y -= user.speed;
+     updateUserPosition(user);
+   } else if (key === 103) { //keypad 7
+     if (reachedEdge(user)) { return; };
+     user.x -= user.speed;
+     user.y -= user.speed;
+     updateUserPosition(user);
+   } else if (key === 97) { //keypad 1
+     if (reachedEdge(user)) { return; };
+     user.x -= user.speed;
+     user.y += user.speed;
+     updateUserPosition(user);
+   } else if (key === 99) { //keypad 3
+     if (reachedEdge(user)) { return; };
+     user.x += user.speed;
+     user.y += user.speed;
+     updateUserPosition(user);
    } else if (key === 83) { //S key
      if (user.speed > 10) {
-       ctx.fillStyle = 'black';ctx.font = '80px Arial';
+       ctx.fillStyle = 'black';
+       ctx.font = '80px Arial';
        ctx.fillText("max speed!", 50, 200);
      } else {
        user.speed = user.speed * 1.05;
@@ -140,73 +144,6 @@ window.onkeydown = function(e) {
        message: {
          userId: user.userId,
          radius: user.radius
-       }
-     };
-     socket.send(JSON.stringify(data));
-   } else if (key === 37 || key === 100) { //LEFT
-     if (user.x - user.radius - 5 < 0) {return;};
-     user.x -= user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
-   } else if (key === 105) { //keypad 9
-     if (user.x + user.radius + 5 > 1200) {return;};
-     if ((user.y - user.radius + 5)  < 10) {return;};
-     user.x += user.speed;
-     user.y -= user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         y: user.y,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
-   } else if (key === 103) { //keypad 7
-     if ((user.y - user.radius + 5)  < 10) {return;};
-     if (user.x - user.radius - 5 < 0) {return;};
-     user.x -= user.speed;
-     user.y -= user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         y: user.y,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
-   } else if (key === 97) { //keypad 1
-     if ((user.y + user.radius + 5) > 800) {return;};
-     if (user.x - user.radius - 5 < 0) {return;};
-     user.x -= user.speed;
-     user.y += user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         y: user.y,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
-   } else if (key === 99) { //keypad 3
-     if (user.y + user.radius + 5 > 800) {return;};
-     if (user.x + user.radius + 5 > 1200) {return;};
-     user.x += user.speed;
-     user.y += user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         y: user.y,
-         userId: user.userId
        }
      };
      socket.send(JSON.stringify(data));
@@ -228,6 +165,25 @@ window.onkeydown = function(e) {
 // var programStart = function() {
 //   setInterval(render, 10);
 // }
+
+var updateUserPosition = function(user) {
+     var data = {
+       type: 'userAction',
+       message: {
+         x: user.x,
+         y: user.y,
+         userId: user.userId
+       }
+     };
+     socket.send(JSON.stringify(data)); 
+};
+
+var reachedEdge = function(user) {
+  return user.y + user.radius + 5 > 800
+    || user.x + user.radius + 5 > 1200
+    || user.x - user.radius - 5 < 0
+    || user.y - user.radius + 5  < 10;
+};
 
 var clearBackground = function() {
   ctx.fillStyle = 'white';
