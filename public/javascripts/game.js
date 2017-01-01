@@ -1,4 +1,5 @@
-'use strict'
+var c = document.getElementById("game");
+var ctx = c.getContext("2d");
 
 var socket = io.connect('/');
 var map = {
@@ -60,8 +61,9 @@ var drawCircle = function(x, y, r) {
   ctx.stroke();
 }
 
-var c = document.getElementById("game");
-var ctx = c.getContext("2d");
+
+
+
 var x = 0;
 var y = 0;
 
