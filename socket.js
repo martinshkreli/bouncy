@@ -4,6 +4,7 @@ var userCount = 0;
 var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
 var users = [];
 var globalChatroom = [];
+var auths = [];
 
 class userProtoModel {
   constructor(name, color, x, y, radius, speed) {
@@ -26,6 +27,19 @@ exports.initialize = function(server) {
 
   io.sockets.on("connection", function(socket) {
 
+        io.use(function(socket, next) {
+          console.log("NEW SOCKET");
+          console.log(socket.handshake.headers.cookie);
+          socket.send(JSON.stringify(
+            {
+              type: 'connection',
+              cookie: socket.handshake.headers.cookie
+            }
+          ));
+          auths.push(socket.handshake.headers.cookie);
+          next();
+        })
+
     var rnd = Math.floor((Math.random() * 10) + 0);
     var userProto = new userProtoModel(names[rnd], "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)", 150, 150, 100, 5);
     globalMap.users.push(userProto);
@@ -47,15 +61,33 @@ exports.initialize = function(server) {
       //PARSE THE MESSAGE FROM STRING BACK TO JSON
       try {
         message = JSON.parse(message);
+
         if (message.type == 'userAction') {
+
+          if (auths.includes(message.message.auth)) {
+            console.log("auth passed");
+          }
+          else {
+            console.log('auth failed');
+            throw ("auth failed");
+          }
+
           if (message.message.radius > 110) {return;};
+
           if (message.message.speed > 10) {return;};
+
           console.log("Player message: ");
           console.log(message);
+
           stateBuilder(message); //add user update to globalMap
           //message.type = 'myMessage';
           io.emit('message', JSON.stringify(message));
           console.log("message sent");
+
+        }
+
+        if (message.type === 'disconnection') {
+          console.log(message.message.userId + " disconnected");
         }
 
         if (message.type === 'textMessage') {
@@ -90,7 +122,6 @@ exports.initialize = function(server) {
     socket.on('disconnect', function() {
       console.log('user disconnected');
     });
-
 
   });
 };

@@ -18,6 +18,7 @@ var user = {
   userId: 0
 }
 var users = [];
+var auth = "";
 //map.users[0] = user;
 
 var createRandom = function (min, max) {
@@ -25,8 +26,16 @@ var createRandom = function (min, max) {
   return newRandom;
 }
 
-socket.on('message', function(data){
+socket.on('message', function(data) {
   data = JSON.parse(data);
+
+  if (data.username) {
+    $('#messages').append('<div class="'+data.type+'"><span class="name">' + data.username + ":</span> " + data.message + '</div');
+  }
+
+  if (data.type === 'connection') {
+    auth = data.cookie;
+  }
 
   if (data.type === 'messages') {
     const allChatMessages = data.chats;
@@ -39,7 +48,8 @@ socket.on('message', function(data){
         $("#chatroom-messages").append('<li>' + allChatMessages.pop() + '</li>')
     }
   }
-  if(data.type === "map"){
+
+  if(data.type === "map") {
     map = data; //TODO: make this map message smaller
     render();
     // Let's render here instead of doing it every 10 ms. This could help ease load.
@@ -62,9 +72,6 @@ var drawCircle = function(x, y, r) {
   ctx.arc(x, y, r, 0, 2*Math.PI);
   ctx.stroke();
 }
-
-
-
 
 var x = 0;
 var y = 0;
@@ -183,7 +190,7 @@ var renderUpdate = function(data) {
 //drawCircle (user.x, user.y, user.radius);
 // programStart();
 
-$('#send').on('click', function (clicked) {
+  $('#send').on('click', function (clicked) {
   const messageToSend = $('#message').val();
   if (messageToSend.length < 1) {
     alert('Make sure to actually write a message!');
@@ -193,14 +200,16 @@ $('#send').on('click', function (clicked) {
     alert('Make sure to actually write a message!');
     return;
   }
-
   var payload = {
     type: 'textMessage',
     msg: messageToSend
   };
-
   socket.send(JSON.stringify(payload));
+});
 
+$('#setname').on('click', function(clicked) {
+  socket.emit("set_name", {name: $('#nickname').val() });
+  console.log('sent message');
 });
 
 
@@ -210,9 +219,11 @@ var sendPosition = function() {
     message: {
       x: user.x,
       y: user.y,
-      userId: user.userId
+      userId: user.userId,
+      auth: auth
     }
   };
   socket.send(JSON.stringify(data));
 };
+
 })

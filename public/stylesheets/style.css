@@ -26,11 +26,16 @@ h1 {
 #chatroom {
   position: absolute;
   height: 400px;
-  width: 150px;
+  width: 350px;
   right: 100px;
   background-color: #EFFFEC;
   margin: 0px;
   padding: 0px;
+}
+#setnamesection {
+  position: absolute;
+  right: 200px;
+  top: 450px;
 }
 #messages{
   position: absolute;
