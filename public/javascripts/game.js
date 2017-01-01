@@ -104,7 +104,8 @@ window.onkeydown = function(e) {
        type: 'userAction',
        message: {
          userId: user.userId,
-         radius: user.radius
+         radius: user.radius,
+         auth: auth
        }
      };
      socket.send(JSON.stringify(data));
@@ -143,7 +144,8 @@ window.onkeydown = function(e) {
        type: 'userAction',
        message: {
          userId: user.userId,
-         color: user.color
+         color: user.color,
+         auth: auth
        }
      };
       socket.send(JSON.stringify(data));
