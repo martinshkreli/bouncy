@@ -87,7 +87,7 @@ var x = 0;
 var y = 0;
 
 window.onkeydown = function(e) {
-  e.preventDefault();
+  //e.preventDefault();
   var check;
    var key = e.keyCode ? e.keyCode : e.which;
    if (key === 38 || key === 104) { //up
