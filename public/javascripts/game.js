@@ -1,29 +1,3 @@
-<html>
-<head>
-  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
-  <title>Bouncy</title>
-</head>
-<body>
-  <p> Press S to shrink, press C to change color, arrow keys (including number pad!) to move!</p>
-  <h1 id="messages"></h1>
-  <div id="chatdiv">
-    <section id="chatroom">
-      <input id="message" type="text" placeholder="Enter message">
-      <input id="send" type="button" value="Send">
-      <ul id="chatroom-messages"></ul>
-    </section>
-
-  </div>
-<canvas id="game" width="1200" height="800" style="border:1px solid #000000;">
-</canvas>
-</body>
-<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-<script src="/javascripts/game.js"
-<script
-  src="https://code.jquery.com/jquery-3.1.1.min.js"
-  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-  crossorigin="anonymous"></script>
-<script>
 'use strict'
 
 var socket = io.connect('/');
@@ -98,14 +72,7 @@ window.onkeydown = function(e) {
    if (key === 38 || key === 104) { //up
      if ((user.y - user.radius + 5)  < 10) {return;};
      user.y -= user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         y: user.y,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
+     sendPosition();
    } else if (key === 40 || key === 98) { //down
      if ((user.y + user.radius + 5) > 800) {return;};
      user.y += user.speed;
@@ -288,4 +255,15 @@ $('#send').on('click', function (clicked) {
 
 });
 
-</script>
+
+var sendPosition = function() {
+  var data = {
+    type: 'userAction',
+    message: {
+      x: user.x,
+      y: user.y,
+      userId: user.userId
+    }
+  };
+  socket.send(JSON.stringify(data));
+}
