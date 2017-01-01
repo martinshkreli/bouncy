@@ -87,89 +87,91 @@ var x = 0;
 var y = 0;
 
 window.onkeydown = function(e) {
-  //e.preventDefault();
+  e.preventDefault();
+  var check;
    var key = e.keyCode ? e.keyCode : e.which;
    if (key === 38 || key === 104) { //up
      if ((user.y - user.radius + 5)  < 10) {return;};
-     var check = collisionCheck();
+     check = collisionCheck();
       if (check == true) {
         user.y -= user.speed;
         sendPosition();
       } else {return;}
    } else if (key === 40 || key === 98) { //down
      if ((user.y + user.radius + 5) > 800) {return;};
-     var check = collisionCheck();
+     check = collisionCheck();
      if (check == true) {
-     user.y += user.speed;
-     sendPosition();
-   } else {return;}
+       user.y += user.speed;
+       sendPosition();
+     } else {return;}
    } else if (key === 39 || key === 102) { //right
      if (user.x + user.radius + 5 > 1200) {return;};
-     var check = collisionCheck();
-     if (check == true) {
-     user.x += user.speed;
-     sendPosition();
-   } else {return;}
+      check = collisionCheck();
+      if (check == true) {
+        user.x += user.speed;
+        sendPosition();
+      } else {return;}
    } else if (key === 83) { //S key
-     if (user.speed > 10) {
-       ctx.fillStyle = 'black';ctx.font = '80px Arial';
-       ctx.fillText("max speed!", 50, 200);
-     } else {
-       user.speed = user.speed * 1.05;
-       user.radius = user.radius * 0.95;
-     };
-     var data = {
-       type: 'userAction',
-       message: {
+       if (user.speed > 10) {
+         ctx.fillStyle = 'black';ctx.font = '80px Arial';
+         ctx.fillText("max speed!", 50, 200);
+         return;
+       } else {
+         user.speed = user.speed * 1.05;
+         user.radius = user.radius * 0.95;
+      var data = {
+        type: 'userAction',
+        message: {
          userId: user.userId,
          radius: user.radius,
          auth: auth
        }
+      };
+      socket.send(JSON.stringify(data));
      };
-     socket.send(JSON.stringify(data));
    } else if (key === 37 || key === 100) { //LEFT
      if (user.x - user.radius - 5 < 0) {return;};
-     var check = collisionCheck();
-     if (check == true) {
-     user.x -= user.speed;
-     sendPosition();
-   } else {return;}
+      check = collisionCheck();
+      if (check == true) {
+        user.x -= user.speed;
+        sendPosition();
+      } else {return;}
    } else if (key === 105) { //keypad 9
      if (user.x + user.radius + 5 > 1200) {return;};
      if ((user.y - user.radius + 5)  < 10) {return;};
-     var check = collisionCheck();
+     check = collisionCheck();
      if (check == true){
-     user.x += user.speed;
-     user.y -= user.speed;
-     sendPosition();
-   } else {return;}
+       user.x += user.speed;
+       user.y -= user.speed;
+       sendPosition();
+     } else {return;}
    } else if (key === 103) { //keypad 7
      if ((user.y - user.radius + 5)  < 10) {return;};
      if (user.x - user.radius - 5 < 0) {return;};
-     var check = collisionCheck();
+     check = collisionCheck();
      if (check == true) {
-     user.x -= user.speed;
-     user.y -= user.speed;
-     sendPosition();
-   } else {return;}
+       user.x -= user.speed;
+       user.y -= user.speed;
+       sendPosition();
+     } else {return;}
    } else if (key === 97) { //keypad 1
      if ((user.y + user.radius + 5) > 800) {return;};
      if (user.x - user.radius - 5 < 0) {return;};
-     var check = collisionCheck();
-     if (check == true) {
-     user.x -= user.speed;
-     user.y += user.speed;
-     sendPosition();
-   } else {return;}
+     check = collisionCheck();
+      if (check == true) {
+       user.x -= user.speed;
+       user.y += user.speed;
+       sendPosition();
+      } else {return;}
    } else if (key === 99) { //keypad 3
      if (user.y + user.radius + 5 > 800) {return;};
      if (user.x + user.radius + 5 > 1200) {return;};
-     var check = collisionCheck();
-     if (check == true) {
-     user.x += user.speed;
-     user.y += user.speed;
-     sendPosition();
-   } else {return;}
+     check = collisionCheck();
+      if (check == true) {
+        user.x += user.speed;
+        user.y += user.speed;
+        sendPosition();
+      } else {return;}
    } else if (key === 67) { //C
      user.color = "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)";
      var data = {
