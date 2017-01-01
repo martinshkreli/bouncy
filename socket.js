@@ -29,7 +29,6 @@ exports.initialize = function(server) {
 
   io.sockets.on("connection", function(socket) {
 
-
           socket.send(JSON.stringify(
             {
               type: 'connection',
@@ -44,7 +43,6 @@ exports.initialize = function(server) {
           else {
             auths.push(socket.handshake.headers.cookie);
           }
-
 
     var rnd = createRandom(0,10);
     var userProto = new userProtoModel(
@@ -174,17 +172,17 @@ if (message.message.x) {
     }
     if (i == message.message.userId) {continue;}
 
-    console.log("Checking user: " + i);
-    console.log("User's x value is: " + globalMap.users[i].x);
-    console.log("Compared to my : " + message.message.x);
-    console.log("and: " + radiusValue);
+    //console.log("Checking user: " + i);
+    //console.log("User's x value is: " + globalMap.users[i].x);
+    //console.log("Compared to my : " + message.message.x);
+    //console.log("and: " + radiusValue);
 
     if (Math.abs(globalMap.users[i].x - message.message.x) < 5 ) {
-      console.log(globalMap.users[i].x);
-      console.log(message.message.x);
-      console.log("difference is");
-      console.log(globalMap.users[i].x - message.message.x);
-      console.log("COLLISION DETECTED");
+      //console.log(globalMap.users[i].x);
+      //console.log(message.message.x);
+      //console.log("difference is");
+      //console.log(globalMap.users[i].x - message.message.x);
+      //console.log("COLLISION DETECTED");
       passedCheck = false;
       return passedCheck;
     }
@@ -202,13 +200,13 @@ if (message.message.y) {
     }
     if (i == message.message.userId) {continue;}
 
-    console.log("Checking user: " + i);
-    console.log("User's x value is: " + globalMap.users[i].y);
-    console.log("Compared to my : " + message.message.y);
-    console.log("and: " + radiusValue);
+    //console.log("Checking user: " + i);
+    //console.log("User's x value is: " + globalMap.users[i].y);
+    //console.log("Compared to my : " + message.message.y);
+    //console.log("and: " + radiusValue);
 
     if (Math.abs(globalMap.users[i].y - message.message.y) < 5 ) {
-      console.log("COLLISION DETECTED");
+//      console.log("COLLISION DETECTED");
       passedCheck = false;
       return passedCheck;
     }
