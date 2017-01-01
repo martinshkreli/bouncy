@@ -80,25 +80,11 @@ window.onkeydown = function(e) {
    } else if (key === 40 || key === 98) { //down
      if ((user.y + user.radius + 5) > 800) {return;};
      user.y += user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         y: user.y,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
+     sendPosition();
    } else if (key === 39 || key === 102) { //right
      if (user.x + user.radius + 5 > 1200) {return;};
      user.x += user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
+     sendPosition();
    } else if (key === 83) { //S key
      if (user.speed > 10) {
        ctx.fillStyle = 'black';ctx.font = '80px Arial';
@@ -118,70 +104,32 @@ window.onkeydown = function(e) {
    } else if (key === 37 || key === 100) { //LEFT
      if (user.x - user.radius - 5 < 0) {return;};
      user.x -= user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
+     sendPosition();
    } else if (key === 105) { //keypad 9
      if (user.x + user.radius + 5 > 1200) {return;};
      if ((user.y - user.radius + 5)  < 10) {return;};
      user.x += user.speed;
      user.y -= user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         y: user.y,
-         userId: user.userId
-       }
-     };
+     sendPosition();
      socket.send(JSON.stringify(data));
    } else if (key === 103) { //keypad 7
      if ((user.y - user.radius + 5)  < 10) {return;};
      if (user.x - user.radius - 5 < 0) {return;};
      user.x -= user.speed;
      user.y -= user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         y: user.y,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
+     sendPosition();
    } else if (key === 97) { //keypad 1
      if ((user.y + user.radius + 5) > 800) {return;};
      if (user.x - user.radius - 5 < 0) {return;};
      user.x -= user.speed;
      user.y += user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         y: user.y,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
+     sendPosition();
    } else if (key === 99) { //keypad 3
      if (user.y + user.radius + 5 > 800) {return;};
      if (user.x + user.radius + 5 > 1200) {return;};
      user.x += user.speed;
      user.y += user.speed;
-     var data = {
-       type: 'userAction',
-       message: {
-         x: user.x,
-         y: user.y,
-         userId: user.userId
-       }
-     };
-     socket.send(JSON.stringify(data));
+     sendPosition();
    } else if (key === 67) { //C
      user.color = "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)";
      var data = {
@@ -192,14 +140,10 @@ window.onkeydown = function(e) {
        }
      };
       socket.send(JSON.stringify(data));
-   } else if (key === 68) {
+   } else if (key === 68) { //V
      console.log(map);
    }
 }
-
-// var programStart = function() {
-//   setInterval(render, 10);
-// }
 
 var clearBackground = function() {
   ctx.fillStyle = 'white';
@@ -270,5 +214,5 @@ var sendPosition = function() {
     }
   };
   socket.send(JSON.stringify(data));
-}
+};
 })

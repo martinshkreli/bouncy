@@ -21,17 +21,12 @@ var globalMap = {
 }
 
 exports.initialize = function(server) {
+
   io = io.listen(server);
+
   io.sockets.on("connection", function(socket) {
     var rnd = Math.floor((Math.random() * 10) + 0);
-    var userProto = new userProtoModel(
-      names[rnd],
-      "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)",
-      150,
-      150,
-      100,
-      5
-      );
+    var userProto = new userProtoModel(names[rnd], "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)", 150, 150, 100, 5);
     globalMap.users.push(userProto);
     socket.send(JSON.stringify(
       {
@@ -45,7 +40,7 @@ exports.initialize = function(server) {
     console.log(globalMap);
     socket.send(JSON.stringify(globalMap));
     userCount++;
-
+  });
 
     socket.on('message', (message) => {
       //PARSE THE MESSAGE FROM STRING BACK TO JSON
@@ -90,7 +85,7 @@ exports.initialize = function(server) {
           console.log(x);
         }
     });
-  });
+
 };
 
 
