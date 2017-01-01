@@ -8,15 +8,22 @@ var map = {
   type: 'map',
   users: []
 }
+
+var userx = createRandom(100,1200);
+var usery = createRandom(100,800);
+
 var user = {
   name: '',
   radius: 100,
   speed: 5,
   color: '',
-  x: 150,
-  y: 150,
+  x: userx,
+  y: usery,
   userId: 0
 }
+
+
+
 var users = [];
 var auth = "";
 //map.users[0] = user;

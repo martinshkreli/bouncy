@@ -18,18 +18,14 @@ class userProtoModel {
 }
 var globalMap = {
   type: 'map',
-  users: []
+  users: [
+  ]
 }
 
 exports.initialize = function(server) {
-
   io = io.listen(server);
-
   io.sockets.on("connection", function(socket) {
-
         io.use(function(socket, next) {
-          console.log("NEW SOCKET");
-          console.log(socket.handshake.headers.cookie);
           socket.send(JSON.stringify(
             {
               type: 'connection',
@@ -38,11 +34,16 @@ exports.initialize = function(server) {
           ));
           auths.push(socket.handshake.headers.cookie);
           next();
-        })
-
+        });
     var rnd = Math.floor((Math.random() * 10) + 0);
-    var userProto = new userProtoModel(names[rnd], "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)", 150, 150, 100, 5);
-    globalMap.users.push(userProto);
+    var userProto = new userProtoModel(
+      names[rnd],
+      "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)",
+      150, 150, 100, 5
+    );
+
+    globalMap.users[userCount] = userProto;
+
     socket.send(JSON.stringify(
       {
         type: 'serverMessage',
@@ -55,7 +56,6 @@ exports.initialize = function(server) {
     console.log(globalMap);
     socket.send(JSON.stringify(globalMap));
     userCount++;
-
 
     socket.on('message', (message) => {
       //PARSE THE MESSAGE FROM STRING BACK TO JSON
@@ -80,10 +80,13 @@ exports.initialize = function(server) {
           console.log("Player message: ");
           console.log(message);
 
-          stateBuilder(message); //add user update to globalMap
+          var verify = stateBuilder(message); //add user update to globalMap
           //message.type = 'myMessage';
-          io.emit('message', JSON.stringify(message));
-          console.log("message sent");
+          if (verify == true){
+            io.emit('message', JSON.stringify(message));
+          } else {
+            return;
+          }
 
         }
 
@@ -129,11 +132,73 @@ exports.initialize = function(server) {
 
 
 var stateBuilder = (message) => {
-  if (message.message.x !== undefined) {globalMap.users[message.message.userId].x = message.message.x;}
-  if (message.message.y !== undefined) {globalMap.users[message.message.userId].y = message.message.y;}
-  if (message.message.radius !== undefined) {globalMap.users[message.message.userId].radius = message.message.radius;}
-  if (message.message.color !== undefined) {globalMap.users[message.message.userId].color = message.message.color;}
-  return globalMap;
+
+//CHECK IF THERE IS A COLLISION
+
+if (message.message.x) {
+  var radiusValue
+  var passedCheck = true;
+  for (var i = 0; i < globalMap.users.length; i++) {
+    if (message.message.radius) {
+      radiusValue = message.message.radius;
+    } else {
+      radiusValue = globalMap.users[message.message.userId].radius;
+    }
+    if (i == message.message.userId) {continue;}
+
+    console.log("Checking user: " + i);
+    console.log("User's x value is: " + globalMap.users[i].x);
+    console.log("Compared to my : " + message.message.x);
+    console.log("and: " + radiusValue);
+
+    if (globalMap.users[i].x > message.message.x - radiusValue) {
+      console.log("COLLISION DETECTED");
+      passedCheck = false;
+      return passedCheck;
+    }
+  }
+};
+
+if (message.message.y) {
+  var secondRadiusValue;
+  var passedCheck = true;
+  for (var i = 0; i < globalMap.users.length; i++) {
+    if (message.message.radius) {
+      radiusValue = message.message.radius;
+    } else {
+      radiusValue = globalMap.users[message.message.userId].radius;
+    }
+    if (i == message.message.userId) {continue;}
+
+    console.log("Checking user: " + i);
+    console.log("User's x value is: " + globalMap.users[i].y);
+    console.log("Compared to my : " + message.message.y);
+    console.log("and: " + radiusValue);
+
+    if (globalMap.users[i].y > message.message.y - radiusValue) {
+      console.log("COLLISION DETECTED");
+      passedCheck = false;
+      return passedCheck;
+    }
+  }
+};
+
+
+
+//CHECK IF THE MESSAGE HAS CONTENT IN EACH PROPERTY. IF SO, AMEND THE GLOBAL MAP
+  if (message.message.x !== undefined) {
+    globalMap.users[message.message.userId].x = message.message.x;
+  }
+  if (message.message.y !== undefined) {
+    globalMap.users[message.message.userId].y = message.message.y;
+  }
+  if (message.message.radius !== undefined) {
+    globalMap.users[message.message.userId].radius = message.message.radius;
+  }
+  if (message.message.color !== undefined) {
+    globalMap.users[message.message.userId].color = message.message.color;
+  }
+  return passedCheck;
 }
 
 var createRandom = (min, max) => {

@@ -31,6 +31,7 @@ h1 {
   background-color: #EFFFEC;
   margin: 0px;
   padding: 0px;
+  overflow: scroll;
 }
 #setnamesection {
   position: absolute;
