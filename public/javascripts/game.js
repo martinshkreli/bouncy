@@ -1,3 +1,5 @@
+$(function() {
+
 var c = document.getElementById("game");
 var ctx = c.getContext("2d");
 
@@ -269,3 +271,4 @@ var sendPosition = function() {
   };
   socket.send(JSON.stringify(data));
 }
+};
