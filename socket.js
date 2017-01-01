@@ -86,10 +86,13 @@ exports.initialize = function(server) {
           console.log(x);
         }
     });
-  });
 
-io.sockets.on("disconnection", function(socket) {
-  console.log('user disconnected');
+    socket.on('disconnect', function() {
+      console.log('user disconnected');
+    });
+
+
+  });
 };
 
 
