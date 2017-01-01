@@ -1,11 +1,14 @@
 var io = require('socket.io');
 var sanitizeHtml = require('sanitize-html');
 var userCount = 0;
-var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Xzibit', 'DMX', 'Florida', 'Jinx', 'ODB']
+var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Emily', 'Speakeasy', 'Florida', 'Jinx', 'ODB']
 var users = [];
 var globalChatroom = [];
 var auths = [];
-
+var createRandom = function (min, max) {
+  var newRandom = Math.floor((Math.random() * max) + min);
+  return newRandom;
+}
 class userProtoModel {
   constructor(name, color, x, y, radius, speed) {
     this.name = '';
@@ -25,6 +28,7 @@ var globalMap = {
 exports.initialize = function(server) {
   io = io.listen(server);
   io.sockets.on("connection", function(socket) {
+
         io.use(function(socket, next) {
           socket.send(JSON.stringify(
             {
@@ -35,11 +39,12 @@ exports.initialize = function(server) {
           auths.push(socket.handshake.headers.cookie);
           next();
         });
-    var rnd = Math.floor((Math.random() * 10) + 0);
+
+    var rnd = createRandom(0,10);
     var userProto = new userProtoModel(
       names[rnd],
       "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)",
-      150, 150, 100, 5
+      createRandom(100,1000), createRandom(100,700), 100, 5
     );
 
     globalMap.users[userCount] = userProto;
@@ -49,12 +54,22 @@ exports.initialize = function(server) {
         type: 'serverMessage',
         message: 'Welcome to Bouncy ' + globalMap.users[userCount].name + '! ' + userCount,
         userId: userCount,
-        color: globalMap.users[userCount].color
+        x: globalMap.users[userCount].x,
+        y: globalMap.users[userCount].y,
+        color: globalMap.users[userCount].color,
+        radius: globalMap.users[userCount].radius
       }
     ));
+
     console.log("globalMap");
     console.log(globalMap);
-    socket.send(JSON.stringify(globalMap));
+    socket.send(JSON.stringify(
+      {
+        type: 'mapMessage',
+        message: globalMap
+      }
+    ));
+
     userCount++;
 
     socket.on('message', (message) => {
@@ -82,9 +97,11 @@ exports.initialize = function(server) {
 
           var verify = stateBuilder(message); //add user update to globalMap
           //message.type = 'myMessage';
-          if (verify == true){
+          if (verify == true) {
+            console.log("verify passed");
             io.emit('message', JSON.stringify(message));
           } else {
+            console.log("verify failed");
             return;
           }
 
@@ -151,7 +168,11 @@ if (message.message.x) {
     console.log("Compared to my : " + message.message.x);
     console.log("and: " + radiusValue);
 
-    if (globalMap.users[i].x > message.message.x - radiusValue) {
+    if (Math.abs(globalMap.users[i].x - message.message.x) < 50 ) {
+      console.log(globalMap.users[i].x);
+      console.log(message.message.x);
+      console.log("difference is");
+      console.log(globalMap.users[i].x - message.message.x);
       console.log("COLLISION DETECTED");
       passedCheck = false;
       return passedCheck;
@@ -175,15 +196,13 @@ if (message.message.y) {
     console.log("Compared to my : " + message.message.y);
     console.log("and: " + radiusValue);
 
-    if (globalMap.users[i].y > message.message.y - radiusValue) {
+    if (Math.abs(globalMap.users[i].y - message.message.y) < 50 ) {
       console.log("COLLISION DETECTED");
       passedCheck = false;
       return passedCheck;
     }
   }
 };
-
-
 
 //CHECK IF THE MESSAGE HAS CONTENT IN EACH PROPERTY. IF SO, AMEND THE GLOBAL MAP
   if (message.message.x !== undefined) {

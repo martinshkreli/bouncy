@@ -2,7 +2,6 @@ $(function() {
 
 var c = document.getElementById("game");
 var ctx = c.getContext("2d");
-
 var socket = io.connect('/');
 var map = {
   type: 'map',
@@ -14,26 +13,27 @@ var createRandom = function (min, max) {
   return newRandom;
 }
 
-var userx = createRandom(100,1200);
-var usery = createRandom(100,800);
+var drawCircle = function(x, y, r, c) {
+  ctx.fillStyle = c;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, 2*Math.PI);
+  ctx.stroke();
+  ctx.fill();
+}
 
 var user = {
   name: '',
   radius: 100,
   speed: 5,
   color: '',
-  x: userx,
-  y: usery,
+  x: 1,
+  y: 1,
   userId: 0
 }
-
-
 
 var users = [];
 var auth = "";
 //map.users[0] = user;
-
-
 
 socket.on('message', function(data) {
   data = JSON.parse(data);
@@ -58,29 +58,30 @@ socket.on('message', function(data) {
     }
   }
 
-  if(data.type === "map") {
-    map = data; //TODO: make this map message smaller
-    render();
-    // Let's render here instead of doing it every 10 ms. This could help ease load.
-  };
-
   if (data.type === "serverMessage") {
     $('#messages').append($('<ul>').text(data.message));
     user.userId = data.userId;
     user.color = data.color;
+    user.x = data.x;
+    user.y = data.y;
+    user.radius = data.radius;
+    drawCircle(user.x, user.y, user.radius, user.color);
   };
 
   if (data.type === "userAction") {
     renderUpdate(data);
   };
 
-});
+  if (data.type === "mapMessage") {
+    console.log('got a map');
+    console.log(data.message);
+    for (var n = 0; n < data.message.users.length; n++){
+      map.users[n] = data.message.users[n];
+    }
+    render();
+  }
 
-var drawCircle = function(x, y, r) {
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, 2*Math.PI);
-  ctx.stroke();
-}
+});
 
 var x = 0;
 var y = 0;
@@ -235,6 +236,7 @@ var sendPosition = function() {
     }
   };
   socket.send(JSON.stringify(data));
+  console.log("sent userAction");
 };
 
 })
