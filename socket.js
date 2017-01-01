@@ -168,7 +168,7 @@ if (message.message.x) {
     console.log("Compared to my : " + message.message.x);
     console.log("and: " + radiusValue);
 
-    if (Math.abs(globalMap.users[i].x - message.message.x) < 50 ) {
+    if (Math.abs(globalMap.users[i].x - message.message.x) < 5 ) {
       console.log(globalMap.users[i].x);
       console.log(message.message.x);
       console.log("difference is");
@@ -196,7 +196,7 @@ if (message.message.y) {
     console.log("Compared to my : " + message.message.y);
     console.log("and: " + radiusValue);
 
-    if (Math.abs(globalMap.users[i].y - message.message.y) < 50 ) {
+    if (Math.abs(globalMap.users[i].y - message.message.y) < 5 ) {
       console.log("COLLISION DETECTED");
       passedCheck = false;
       return passedCheck;
