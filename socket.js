@@ -21,24 +21,30 @@ class userProtoModel {
 }
 var globalMap = {
   type: 'map',
-  users: [
-  ]
+  users: []
 }
 
 exports.initialize = function(server) {
   io = io.listen(server);
+
   io.sockets.on("connection", function(socket) {
 
-        io.use(function(socket, next) {
+
           socket.send(JSON.stringify(
             {
               type: 'connection',
               cookie: socket.handshake.headers.cookie
             }
           ));
-          auths.push(socket.handshake.headers.cookie);
-          next();
-        });
+          console.log("handshake data");
+          console.log(socket.handshake.headers);
+          if (socket.handshake.headers == undefined) {return;}
+          console.log("userCount: " + userCount);
+          if (!socket.handshake.headers.cookie) {return;}
+          else {
+            auths.push(socket.handshake.headers.cookie);
+          }
+
 
     var rnd = createRandom(0,10);
     var userProto = new userProtoModel(
@@ -70,8 +76,10 @@ exports.initialize = function(server) {
         message: globalMap
       }
     ));
-
+    console.log('user count was: ' + userCount);
+    console.log('auth for this instance is: ' + auths[userCount]);
     userCount++;
+    console.log('user count is: ' + userCount);
 
     socket.on('message', (message) => {
       //PARSE THE MESSAGE FROM STRING BACK TO JSON
@@ -80,8 +88,8 @@ exports.initialize = function(server) {
 
         if (message.type == 'userAction') {
 
-          if (auths[((message.message.userId) - 1)] == message.message.auth ||
-             auths[message.message.userId] == message.message.auth
+          if (auths[((message.message.userId) - 1)] == message.message.auth
+             || auths[message.message.userId] == message.message.auth
              || auths[((message.message.userId) + 1)] == message.message.auth ) {
             console.log("auth passed");
           }
@@ -95,8 +103,8 @@ exports.initialize = function(server) {
 
           if (message.message.speed > 10) {return;};
 
-          console.log("Player message: ");
-          console.log(message);
+          //console.log("Player message: ");
+          //console.log(message);
 
           var verify = stateBuilder(message); //add user update to globalMap
           //message.type = 'myMessage';
