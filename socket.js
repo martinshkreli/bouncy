@@ -73,6 +73,7 @@ exports.initialize = function(server) {
           }
 
           if (message.message.radius > 110) {return;};
+          if (message.message.radius < 10) {return;};
 
           if (message.message.speed > 10) {return;};
 
