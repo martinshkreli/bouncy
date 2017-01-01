@@ -79,7 +79,7 @@ exports.initialize = function(server) {
 
         if (message.type == 'userAction') {
 
-          if (auths.includes(message.message.auth)) {
+          if (auths[message.message.userId] == message.message.auth) {
             console.log("auth passed");
           }
           else {
