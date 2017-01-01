@@ -9,6 +9,11 @@ var map = {
   users: []
 }
 
+var createRandom = function (min, max) {
+  var newRandom = Math.floor((Math.random() * max) + min);
+  return newRandom;
+}
+
 var userx = createRandom(100,1200);
 var usery = createRandom(100,800);
 
@@ -28,10 +33,7 @@ var users = [];
 var auth = "";
 //map.users[0] = user;
 
-var createRandom = function (min, max) {
-  var newRandom = Math.floor((Math.random() * max) + min);
-  return newRandom;
-}
+
 
 socket.on('message', function(data) {
   data = JSON.parse(data);
