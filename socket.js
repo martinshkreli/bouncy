@@ -44,7 +44,7 @@ exports.initialize = function(server) {
     var userProto = new userProtoModel(
       names[rnd],
       "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)",
-      createRandom(100,1000), createRandom(100,700), 100, 5
+      createRandom(100,1000), createRandom(100,700), 50, 5
     );
 
     console.log("userCount: " + userCount);
