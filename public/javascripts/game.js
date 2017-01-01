@@ -271,4 +271,4 @@ var sendPosition = function() {
   };
   socket.send(JSON.stringify(data));
 }
-};
+})
