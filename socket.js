@@ -41,7 +41,7 @@ exports.initialize = function(server) {
           console.log("userCount: " + userCount);
           if (!socket.handshake.headers.cookie) {return;}
           else {
-            auths.push(socket.handshake.headers.cookie);
+            auths[userCount] = socket.handshake.headers.cookie;
           }
 
     var rnd = createRandom(0,10);
