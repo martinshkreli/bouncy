@@ -1,7 +1,7 @@
 var io = require('socket.io');
 var sanitizeHtml = require('sanitize-html');
 var userCount = 0;
-var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Dre', 'Emily', 'Speakeasy', 'Florida', 'Jinx', 'ODB']
+var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Armnoodle', 'Emily', 'Speakeasy', 'Florida', 'Jinx', 'ODB']
 var users = [];
 var globalChatroom = [];
 var auths = [];
@@ -35,14 +35,14 @@ exports.initialize = function(server) {
               cookie: socket.handshake.headers.cookie
             }
           ));
-          console.log("handshake data");
-          console.log(socket.handshake.headers);
-          if (socket.handshake.headers == undefined) {return;}
-          console.log("userCount: " + userCount);
-          if (!socket.handshake.headers.cookie) {return;}
-          else {
-            auths[userCount] = socket.handshake.headers.cookie;
-          }
+            console.log("handshake data");
+            console.log(socket.handshake.headers);
+            if (socket.handshake.headers == undefined) {return;}
+            console.log("userCount: " + userCount);
+            if (!socket.handshake.headers.cookie) {return;}
+            else {
+              auths[userCount] = socket.handshake.headers.cookie;
+            }
 
     var rnd = createRandom(0,10);
     var userProto = new userProtoModel(
@@ -68,7 +68,7 @@ exports.initialize = function(server) {
 
     console.log("globalMap");
     console.log(globalMap);
-    socket.send(JSON.stringify(
+    socket.broadcast.send(JSON.stringify(
       {
         type: 'mapMessage',
         message: globalMap
@@ -89,7 +89,7 @@ exports.initialize = function(server) {
           if (auths[((message.message.userId) - 1)] == message.message.auth
              || auths[message.message.userId] == message.message.auth
              || auths[((message.message.userId) + 1)] == message.message.auth ) {
-            console.log("auth passed");
+          //  console.log("auth passed");
           }
           else {
             console.log('auth failed');
@@ -107,7 +107,8 @@ exports.initialize = function(server) {
           var verify = stateBuilder(message); //add user update to globalMap
           //message.type = 'myMessage';
           if (verify == true) {
-            console.log("verify passed");
+            //console.log("verify passed");
+            console.log(message);
             io.emit('message', JSON.stringify(message));
           } else {
             console.log("verify failed");

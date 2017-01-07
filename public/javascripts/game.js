@@ -14,6 +14,7 @@ var createRandom = function (min, max) {
 }
 
 var drawCircle = function(x, y, r, c) {
+  console.log("drawing: " + x + " " + y + " " + r + " " + c);
   ctx.fillStyle = c;
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2*Math.PI);
@@ -23,7 +24,7 @@ var drawCircle = function(x, y, r, c) {
 
 var user = {
   name: '',
-  radius: 100,
+  radius: 50,
   speed: 5,
   color: '',
   x: 1,
@@ -34,9 +35,12 @@ var user = {
 var users = [];
 var auth = "";
 //map.users[0] = user;
+console.log('Line 37 user');
+console.log(user);
 
 socket.on('message', function(data) {
   data = JSON.parse(data);
+  console.log(data);
 
   if (data.username) {
     $('#messages').append('<div class="'+data.type+'"><span class="name">' + data.username + ":</span> " + data.message + '</div');
@@ -60,15 +64,28 @@ socket.on('message', function(data) {
 
   if (data.type === "serverMessage") {
     $('#messages').append($('<ul>').text(data.message));
+    console.log('user object:');
+    console.log(user);
+    console.log('first receipt of data:');
+    console.log(data);
     user.userId = data.userId;
     user.color = data.color;
     user.x = data.x;
     user.y = data.y;
     user.radius = data.radius;
+    map.users[user.userId] = {};
+    map.users[user.userId].color = user.color;
+    map.users[user.userId].radius = user.radius;
+    map.users[user.userId].y = user.y;
+    map.users[user.userId].x = user.x;
+    console.log("user object after update");
+    console.log(user);
     drawCircle(user.x, user.y, user.radius, user.color);
   };
 
   if (data.type === "userAction") {
+    console.log("got movement");
+    console.log(data);
     renderUpdate(data);
   };
 
@@ -124,6 +141,9 @@ window.onkeydown = function(e) {
         message: {
          userId: user.userId,
          radius: user.radius,
+         color: user.color,
+         x: user.x,
+         y: user.y,
          auth: auth
        }
       };
@@ -179,6 +199,9 @@ window.onkeydown = function(e) {
        message: {
          userId: user.userId,
          color: user.color,
+         radius: user.radius,
+         x: user.x,
+         y: user.y,
          auth: auth
        }
      };
@@ -206,8 +229,9 @@ var renderMap = function() {
     if(map.users[n] === null) {continue};
     if(map.users[n].x === undefined ) {continue};
     if(map.users[n].x === null ) {continue};
-    ctx.fillStyle = map.users[n].color;
-    drawCircle(map.users[n].x, map.users[n].y, map.users[n].radius);
+    console.log("drawing circle");
+    console.log(map.users[n]);
+    drawCircle(map.users[n].x, map.users[n].y, map.users[n].radius, map.users[n].color);
     ctx.fill();
   }
   //ctx.fillText(user.userId, 10, 500);
@@ -256,6 +280,8 @@ var sendPosition = function() {
       x: user.x,
       y: user.y,
       userId: user.userId,
+      radius: user.radius,
+      color: user.color,
       auth: auth
     }
   };
@@ -264,7 +290,13 @@ var sendPosition = function() {
 
 var collisionCheck = function () {
     for (var i = 0; i < map.users.length; i++) {
-      if (i == user.userId) {continue;}
+      if (i === user.userId) {continue;}
+      if (map.users[i] === undefined) {continue;}
+      if (map.users[i].x === undefined) {continue;}
+      console.log('user were examining');
+      console.log(map.users[i]);
+      console.log('user the player represents');
+      console.log(user.userId);
       if (Math.abs(user.x - map.users[i].x) < 5 && Math.abs(user.y - map.users[i].y) < 5) {
         console.log("COLLISION");
         return false;
