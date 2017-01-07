@@ -14,7 +14,6 @@ var createRandom = function (min, max) {
 }
 
 var drawCircle = function(x, y, r, c) {
-  console.log("drawing: " + x + " " + y + " " + r + " " + c);
   ctx.fillStyle = c;
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2*Math.PI);
@@ -35,12 +34,9 @@ var user = {
 var users = [];
 var auth = "";
 //map.users[0] = user;
-console.log('Line 37 user');
-console.log(user);
 
 socket.on('message', function(data) {
   data = JSON.parse(data);
-  console.log(data);
 
   if (data.username) {
     $('#messages').append('<div class="'+data.type+'"><span class="name">' + data.username + ":</span> " + data.message + '</div');
@@ -64,10 +60,6 @@ socket.on('message', function(data) {
 
   if (data.type === "serverMessage") {
     $('#messages').append($('<ul>').text(data.message));
-    console.log('user object:');
-    console.log(user);
-    console.log('first receipt of data:');
-    console.log(data);
     user.userId = data.userId;
     user.color = data.color;
     user.x = data.x;
@@ -78,20 +70,14 @@ socket.on('message', function(data) {
     map.users[user.userId].radius = user.radius;
     map.users[user.userId].y = user.y;
     map.users[user.userId].x = user.x;
-    console.log("user object after update");
-    console.log(user);
     drawCircle(user.x, user.y, user.radius, user.color);
   };
 
   if (data.type === "userAction") {
-    console.log("got movement");
-    console.log(data);
     renderUpdate(data);
   };
 
   if (data.type === "mapMessage") {
-    console.log('got a map');
-    console.log(data.message);
     for (var n = 0; n < data.message.users.length; n++){
       map.users[n] = data.message.users[n];
     }
@@ -229,8 +215,6 @@ var renderMap = function() {
     if(map.users[n] === null) {continue};
     if(map.users[n].x === undefined ) {continue};
     if(map.users[n].x === null ) {continue};
-    console.log("drawing circle");
-    console.log(map.users[n]);
     drawCircle(map.users[n].x, map.users[n].y, map.users[n].radius, map.users[n].color);
     ctx.fill();
   }
@@ -269,7 +253,6 @@ var renderUpdate = function(data) {
 
 $('#setname').on('click', function(clicked) {
   socket.emit("set_name", {name: $('#nickname').val() });
-  console.log('sent message');
 });
 
 
@@ -292,11 +275,7 @@ var collisionCheck = function () {
     for (var i = 0; i < map.users.length; i++) {
       if (i === user.userId) {continue;}
       if (map.users[i] === undefined) {continue;}
-      if (map.users[i].x === undefined) {continue;}
-      console.log('user were examining');
-      console.log(map.users[i]);
-      console.log('user the player represents');
-      console.log(user.userId);
+      if (map.users[i].x === undefined) {continue;}      
       if (Math.abs(user.x - map.users[i].x) < 5 && Math.abs(user.y - map.users[i].y) < 5) {
         console.log("COLLISION");
         return false;
