@@ -5,10 +5,12 @@ var names = ['Martin', 'Mark', 'Randa', 'Cyan', 'Trashy', 'Armnoodle', 'Emily', 
 var users = [];
 var globalChatroom = [];
 var auths = [];
+
 var createRandom = function (min, max) {
   var newRandom = Math.floor((Math.random() * max) + min);
   return newRandom;
 }
+
 class userProtoModel {
   constructor(name, color, x, y, radius, speed) {
     this.name = '';
@@ -19,6 +21,7 @@ class userProtoModel {
     this.speed = speed;
   }
 }
+
 var globalMap = {
   type: 'map',
   users: []
