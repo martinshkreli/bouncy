@@ -29,34 +29,29 @@ var globalMap = {
 
 exports.initialize = function(server) {
   io = io.listen(server);
-
   io.sockets.on("connection", function(socket) {
-
-          socket.send(JSON.stringify(
-            {
-              type: 'connection',
-              cookie: socket.handshake.headers.cookie
-            }
-          ));
-            console.log("handshake data");
-            console.log(socket.handshake.headers);
-            if (socket.handshake.headers == undefined) {return;}
-            console.log("userCount: " + userCount);
-            if (!socket.handshake.headers.cookie) {return;}
-            else {
-              auths[userCount] = socket.handshake.headers.cookie;
-            }
+    socket.send(JSON.stringify(
+      {
+        type: 'connection',
+        cookie: socket.handshake.headers.cookie
+      }
+    ));
+    if (socket.handshake.headers == undefined) {return;}
+    if (!socket.handshake.headers.cookie) {return;}
+    else {
+      auths[userCount] = socket.handshake.headers.cookie;
+    }
 
     var rnd = createRandom(0,10);
+  //assign random name, color, x and y location, 50 radius and 5 speed
     var userProto = new userProtoModel(
       names[rnd],
       "rgba(" + createRandom(0,255) + ", " + createRandom(0,255) + ", " + createRandom(0,255) + ", 0.5)",
       createRandom(100,1000), createRandom(100,700), 50, 5
     );
-
-    console.log("userCount: " + userCount);
+  //put userProto information into globalMap
     globalMap.users[userCount] = userProto;
-
+  //send a serverMessage to client
     socket.send(JSON.stringify(
       {
         type: 'serverMessage',
@@ -68,70 +63,52 @@ exports.initialize = function(server) {
         radius: globalMap.users[userCount].radius
       }
     ));
-
-    console.log("globalMap");
-    console.log(globalMap);
+    //send mapMessage to client
     socket.broadcast.send(JSON.stringify(
       {
         type: 'mapMessage',
         message: globalMap
       }
     ));
-    console.log('user count was: ' + userCount);
-    console.log('auth for this instance is: ' + auths[userCount]);
+    //console.log('auth for this instance is: ' + auths[userCount]);
     userCount++;
-    console.log('user count is: ' + userCount);
 
     socket.on('message', (message) => {
       //PARSE THE MESSAGE FROM STRING BACK TO JSON
       try {
         message = JSON.parse(message);
-
+        //this is the typical client message to the server
         if (message.type == 'userAction') {
-
+          //ensure auth
           if (auths[((message.message.userId) - 1)] == message.message.auth
              || auths[message.message.userId] == message.message.auth
              || auths[((message.message.userId) + 1)] == message.message.auth ) {
           //  console.log("auth passed");
           }
-          else {
-            console.log('auth failed');
-            throw ("auth failed");
-          }
-
+          else {throw ("auth failed");}
+          //check if user message meets obvious params
           if (message.message.radius > 110) {return;};
           if (message.message.radius < 10) {return;};
-
           if (message.message.speed > 10) {return;};
-
-          //console.log("Player message: ");
-          //console.log(message);
-
+          //call stateBuilder
           var verify = stateBuilder(message); //add user update to globalMap
           //message.type = 'myMessage';
           if (verify == true) {
-            //console.log("verify passed");
-            console.log(message);
             io.emit('message', JSON.stringify(message));
-          } else {
-            console.log("verify failed");
-            return;
-          }
-
+          } else {return;}
         }
 
         if (message.type === 'disconnection') {
           console.log(message.message.userId + " disconnected");
+          globalMap.users[message.message.userId].x = 0;
+          globalMap.users[message.message.userId].y = 0;
+          globalMap.users[message.message.userId].radius = 0;
         }
 
         if (message.type === 'textMessage') {
           const messageToSend = sanitizeHtml(message.msg);
-          if (messageToSend.length < 1) {
-            return;
-          }
-          if (messageToSend.length > 20) {
-            return;
-          }
+          if (messageToSend.length < 1) {return;}
+          if (messageToSend.length > 20) {return;}
           if (messageToSend.indexOf("fuck") != -1) {return;};
           if (messageToSend.indexOf("fuk") != -1) {return;};
           console.log('message recieved %s', messageToSend);
@@ -143,7 +120,6 @@ exports.initialize = function(server) {
           };
           // And.. Send.
           socket.send(JSON.stringify(payload));
-
           // And then emit to all other users too.
           socket.broadcast.send(JSON.stringify(payload));
         }
@@ -154,6 +130,7 @@ exports.initialize = function(server) {
     });
 
     socket.on('disconnect', function() {
+      //must update code for removing disconnected user from map
       console.log('user disconnected');
     });
 
@@ -162,11 +139,9 @@ exports.initialize = function(server) {
 
 
 var stateBuilder = (message) => {
-
 //CHECK IF THERE IS A COLLISION
-
 if (message.message.x) {
-  var radiusValue
+  var radiusValue;
   var passedCheck = true;
   for (var i = 0; i < globalMap.users.length; i++) {
     if (message.message.radius) {
@@ -175,18 +150,7 @@ if (message.message.x) {
       radiusValue = globalMap.users[message.message.userId].radius;
     }
     if (i == message.message.userId) {continue;}
-
-    //console.log("Checking user: " + i);
-    //console.log("User's x value is: " + globalMap.users[i].x);
-    //console.log("Compared to my : " + message.message.x);
-    //console.log("and: " + radiusValue);
-
     if (Math.abs(globalMap.users[i].x - message.message.x) < 5 ) {
-      //console.log(globalMap.users[i].x);
-      //console.log(message.message.x);
-      //console.log("difference is");
-      //console.log(globalMap.users[i].x - message.message.x);
-      //console.log("COLLISION DETECTED");
       passedCheck = false;
       return passedCheck;
     }
@@ -203,14 +167,7 @@ if (message.message.y) {
       radiusValue = globalMap.users[message.message.userId].radius;
     }
     if (i == message.message.userId) {continue;}
-
-    //console.log("Checking user: " + i);
-    //console.log("User's x value is: " + globalMap.users[i].y);
-    //console.log("Compared to my : " + message.message.y);
-    //console.log("and: " + radiusValue);
-
     if (Math.abs(globalMap.users[i].y - message.message.y) < 5 ) {
-//      console.log("COLLISION DETECTED");
       passedCheck = false;
       return passedCheck;
     }
