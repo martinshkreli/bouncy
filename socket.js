@@ -1,3 +1,6 @@
+//bugs include new users do not correctly display map locations of all connected users
+//disconnections not processed properly
+
 var io = require('socket.io');
 var sanitizeHtml = require('sanitize-html');
 var userCount = 0;
@@ -129,14 +132,12 @@ exports.initialize = function(server) {
         }
     });
 
-    socket.on('disconnect', function() {
+    socket.on('disconnect', function(message) {
       //must update code for removing disconnected user from map
       console.log('user disconnected');
     });
-
   });
 };
-
 
 var stateBuilder = (message) => {
 //CHECK IF THERE IS A COLLISION

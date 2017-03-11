@@ -83,7 +83,6 @@ socket.on('message', function(data) {
     }
     render();
   }
-
 });
 
 var x = 0;
@@ -275,7 +274,7 @@ var collisionCheck = function () {
     for (var i = 0; i < map.users.length; i++) {
       if (i === user.userId) {continue;}
       if (map.users[i] === undefined) {continue;}
-      if (map.users[i].x === undefined) {continue;}      
+      if (map.users[i].x === undefined) {continue;}
       if (Math.abs(user.x - map.users[i].x) < 5 && Math.abs(user.y - map.users[i].y) < 5) {
         console.log("COLLISION");
         return false;
@@ -283,6 +282,5 @@ var collisionCheck = function () {
     }
   return true;
 }
-
 
 })
